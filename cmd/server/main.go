@@ -42,7 +42,6 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-
 func main() {
 	// Initialize logger
 	logger, err := zap.NewProduction()
@@ -91,7 +90,7 @@ func main() {
 	r.Use(customMiddleware.LoggerMiddleware(logger))
 
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"), // Путь к JSON файлу с документацией
+		httpSwagger.URL("docs/doc.json"), // Путь к JSON файлу с документацией
 	))
 
 	// Routes

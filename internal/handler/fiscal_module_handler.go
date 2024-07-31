@@ -151,7 +151,7 @@ func (h *FiscalModuleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} models.FiscalModule
-// @Failure 500 {object} utils.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Security ApiKeyAuth
 // @Router /fiscal-modules [get]
 func (h *FiscalModuleHandler) List(w http.ResponseWriter, r *http.Request) {

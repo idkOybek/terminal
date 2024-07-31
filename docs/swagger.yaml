@@ -5,6 +5,140 @@ definitions:
       message:
         type: string
     type: object
+  models.FiscalModule:
+    properties:
+      created_at:
+        type: string
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.FiscalModuleCreateRequest:
+    properties:
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.FiscalModuleUpdateRequest:
+    properties:
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Link:
+    properties:
+      created_at:
+        type: string
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+      id:
+        type: integer
+    type: object
+  models.LinkCreateRequest:
+    properties:
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  models.Terminal:
+    properties:
+      address:
+        type: string
+      assembly_number:
+        type: string
+      cash_register_number:
+        type: string
+      company_name:
+        type: string
+      created_at:
+        type: string
+      database_update_date:
+        type: string
+      free_record_balance:
+        type: integer
+      id:
+        type: integer
+      inn:
+        type: string
+      last_request_date:
+        type: string
+      module_number:
+        type: string
+      status:
+        type: boolean
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.TerminalCreateRequest:
+    properties:
+      address:
+        type: string
+      assembly_number:
+        type: string
+      cash_register_number:
+        type: string
+      company_name:
+        type: string
+      free_record_balance:
+        type: integer
+      inn:
+        type: string
+      module_number:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.TerminalUpdateRequest:
+    properties:
+      address:
+        type: string
+      assembly_number:
+        type: string
+      cash_register_number:
+        type: string
+      company_name:
+        type: string
+      free_record_balance:
+        type: integer
+      inn:
+        type: string
+      module_number:
+        type: string
+      status:
+        type: boolean
+      user_id:
+        type: integer
+    type: object
   models.User:
     properties:
       created_at:
@@ -60,6 +194,460 @@ info:
   title: Your API Title
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: User login
+      tags:
+      - auth
+  /fiscal-modules:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all fiscal modules
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.FiscalModule'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List all fiscal modules
+      tags:
+      - fiscal-modules
+    post:
+      consumes:
+      - application/json
+      description: Create a new fiscal module with the given input
+      parameters:
+      - description: Create fiscal module request
+        in: body
+        name: module
+        required: true
+        schema:
+          $ref: '#/definitions/models.FiscalModuleCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.FiscalModule'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new fiscal module
+      tags:
+      - fiscal-modules
+  /fiscal-modules/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a fiscal module by its ID
+      parameters:
+      - description: Fiscal Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a fiscal module
+      tags:
+      - fiscal-modules
+    get:
+      consumes:
+      - application/json
+      description: Get details of a fiscal module by its ID
+      parameters:
+      - description: Fiscal Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FiscalModule'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a fiscal module by ID
+      tags:
+      - fiscal-modules
+    put:
+      consumes:
+      - application/json
+      description: Update a fiscal module's details by its ID
+      parameters:
+      - description: Fiscal Module ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update fiscal module request
+        in: body
+        name: module
+        required: true
+        schema:
+          $ref: '#/definitions/models.FiscalModuleUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.FiscalModule'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a fiscal module
+      tags:
+      - fiscal-modules
+  /links:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Link'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List all links
+      tags:
+      - links
+    post:
+      consumes:
+      - application/json
+      description: Create a new link between fiscal number and factory number
+      parameters:
+      - description: Create link request
+        in: body
+        name: link
+        required: true
+        schema:
+          $ref: '#/definitions/models.LinkCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Link'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new link
+      tags:
+      - links
+  /links/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a link by its ID
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a link
+      tags:
+      - links
+  /links/factory/{factoryNumber}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a link by its factory number
+      parameters:
+      - description: Factory Number
+        in: path
+        name: factoryNumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Link'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a link by factory number
+      tags:
+      - links
+  /terminals:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all terminals
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Terminal'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List all terminals
+      tags:
+      - terminals
+    post:
+      consumes:
+      - application/json
+      description: Create a new terminal with the given input
+      parameters:
+      - description: Create terminal request
+        in: body
+        name: terminal
+        required: true
+        schema:
+          $ref: '#/definitions/models.TerminalCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Terminal'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new terminal
+      tags:
+      - terminals
+  /terminals/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a terminal by its ID
+      parameters:
+      - description: Terminal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a terminal
+      tags:
+      - terminals
+    get:
+      consumes:
+      - application/json
+      description: Get details of a terminal by its ID
+      parameters:
+      - description: Terminal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Terminal'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a terminal by ID
+      tags:
+      - terminals
+    put:
+      consumes:
+      - application/json
+      description: Update a terminal's details by its ID
+      parameters:
+      - description: Terminal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update terminal request
+        in: body
+        name: terminal
+        required: true
+        schema:
+          $ref: '#/definitions/models.TerminalUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Terminal'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a terminal
+      tags:
+      - terminals
   /users:
     get:
       consumes:

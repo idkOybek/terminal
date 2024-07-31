@@ -9,6 +9,7 @@ import (
 
 	"github.com/idkOybek/newNewTerminal/pkg/auth"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
+	"go.uber.org/zap"
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -29,7 +30,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		claims, err := auth.ValidateToken(token)
 		if err != nil {
-			logger.Error("Invalid token: ", err)
+			logger.Error("Invalid token", zap.Error(err))
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}

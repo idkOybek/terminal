@@ -24,7 +24,7 @@ func NewTerminalService(repo repository.TerminalRepository, linkRepo repository.
 
 func (s *TerminalServiceImpl) Create(ctx context.Context, terminalReq *models.TerminalCreateRequest) (*models.Terminal, error) {
 	// Проверяем наличие связки
-	link, err := s.linkRepo.GetByFactoryNumber(ctx, terminalReq.ModuleNumber)
+	_, err := s.linkRepo.GetByFactoryNumber(ctx, terminalReq.ModuleNumber)
 	if err != nil {
 		return nil, errors.New("invalid module number: no link found")
 	}

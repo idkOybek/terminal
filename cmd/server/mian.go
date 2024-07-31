@@ -18,6 +18,8 @@ import (
 	"github.com/idkOybek/newNewTerminal/pkg/database"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
 
+	ware "github.com/idkOybek/newNewTerminal/internal/middleware/logger_middleware.go"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -30,7 +32,7 @@ func main() {
 	}
 
 	// Initialize logger
-	logger := logger.NewLogger(cfg.LogLevel)
+	logger.Init(cfg.LogLevel)
 
 	// Connect to database
 	db, err := database.NewPostgresDB(cfg.DatabaseURL)
@@ -63,7 +65,7 @@ func main() {
 	// Middleware
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.LoggerMiddleware)
+	r.Use(ware.LoggerMiddleware)
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {

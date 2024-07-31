@@ -40,3 +40,10 @@ type LinkRepository interface {
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]models.Link, error)
 }
+
+type Repositories struct {
+	User         UserRepository
+	FiscalModule FiscalModuleRepository
+	Terminal     TerminalRepository
+	Link         LinkRepository
+}

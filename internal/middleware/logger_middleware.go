@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
+	"go.uber.org/zap"
 )
 
 func LoggerMiddleware(next http.Handler) http.Handler {
@@ -17,12 +18,11 @@ func LoggerMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 
 		// Log the request
-		logger.Infof(
-			"%s %s %s %s",
-			r.Method,
-			r.RequestURI,
-			r.RemoteAddr,
-			time.Since(start),
+		logger.Info("Request",
+			zap.String("method", r.Method),
+			zap.String("uri", r.RequestURI),
+			zap.String("addr", r.RemoteAddr),
+			zap.Duration("duration", time.Since(start)),
 		)
 	})
 }

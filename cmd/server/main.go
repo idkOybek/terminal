@@ -70,12 +70,14 @@ func main() {
 	linkRepo := postgres.NewLinkRepository(db)
 
 	// Initialize services
+	authService := service.NewAuthService(userRepo)
 	userService := service.NewUserService(userRepo)
 	fiscalModuleService := service.NewFiscalModuleService(fiscalModuleRepo)
 	terminalService := service.NewTerminalService(terminalRepo, linkRepo)
 	linkService := service.NewLinkService(linkRepo)
 
 	// Initialize handlers
+	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService)
 	fiscalModuleHandler := handler.NewFiscalModuleHandler(fiscalModuleService)
 	terminalHandler := handler.NewTerminalHandler(terminalService)
@@ -89,12 +91,14 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(customMiddleware.LoggerMiddleware(logger))
 
+	// Swagger
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("docs/doc.json"), // Путь к JSON файлу с документацией
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 	))
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {
+		r.Mount("/auth", authHandler.Routes())
 		r.Mount("/users", userHandler.Routes())
 		r.Group(func(r chi.Router) {
 			r.Use(customMiddleware.AuthMiddleware)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
@@ -58,4 +59,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+func (h *AuthHandler) Routes() chi.Router {
+	r := chi.NewRouter()
+	r.Post("/login", h.Login)
+	return r
 }

@@ -11,33 +11,35 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/idkOybek/newNewTerminal/internal/config"
 	"github.com/idkOybek/newNewTerminal/internal/handler"
+	customMiddleware "github.com/idkOybek/newNewTerminal/internal/middleware"
 	"github.com/idkOybek/newNewTerminal/internal/repository/postgres"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/database"
-	"github.com/idkOybek/newNewTerminal/pkg/logger"
-
-	ware "github.com/idkOybek/newNewTerminal/internal/middleware/logger_middleware.go"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"go.uber.org/zap"
 )
 
 func main() {
-	// Initialize configuration
+	// Initialize logger
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
+
+	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+		logger.Fatal("Failed to load config", zap.Error(err))
 	}
-
-	// Initialize logger
-	logger.Init(cfg.LogLevel)
 
 	// Connect to database
 	db, err := database.NewPostgresDB(cfg.DatabaseURL)
 	if err != nil {
-		logger.Fatalf("Failed to connect to database: %v", err)
+		logger.Fatal("Failed to connect to database", zap.Error(err))
 	}
 	defer db.Close()
 
@@ -59,53 +61,52 @@ func main() {
 	terminalHandler := handler.NewTerminalHandler(terminalService)
 	linkHandler := handler.NewLinkHandler(linkService)
 
-	// Initialize router
+	// Set up router
 	r := chi.NewRouter()
 
 	// Middleware
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(ware.LoggerMiddleware)
+	r.Use(customMiddleware.LoggerMiddleware(logger))
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {
 		r.Mount("/users", userHandler.Routes())
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.AuthMiddleware)
+			r.Use(customMiddleware.AuthMiddleware)
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())
 			r.Mount("/links", linkHandler.Routes())
 		})
 	})
 
-	// Start server
+	// Set up server
 	srv := &http.Server{
 		Addr:    ":" + cfg.ServerPort,
 		Handler: r,
 	}
 
-	// Graceful shutdown
+	// Start server
 	go func() {
+		logger.Info("Starting server", zap.String("port", cfg.ServerPort))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatalf("Failed to start server: %v", err)
+			logger.Fatal("listen", zap.Error(err))
 		}
 	}()
 
-	logger.Infof("Server started on port %s", cfg.ServerPort)
-
-	// Wait for interrupt signal to gracefully shut down the server
+	// Wait for interrupt signal to gracefully shutdown the server
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	logger.Info("Shutting down server...")
 
-	logger.Info("Server is shutting down...")
-
+	// The context is used to inform the server it has 5 seconds to finish
+	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatalf("Server forced to shutdown: %v", err)
+		logger.Fatal("Server forced to shutdown", zap.Error(err))
 	}
 
-	logger.Info("Server exited properly")
+	logger.Info("Server exiting")
 }

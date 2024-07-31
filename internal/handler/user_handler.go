@@ -22,6 +22,17 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 	}
 }
 
+// @Summary Create a new user
+// @Description Create a new user with the input payload
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param user body models.UserCreateRequest true "Create user"
+// @Success 201 {object} models.User
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /users [post]
+
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var user models.UserCreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -40,6 +51,17 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(createdUser)
 }
 
+// @Summary Get a user by ID
+// @Description Get a user by ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} models.User
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /users/{id} [get]
+
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -57,6 +79,19 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
+
+// @Summary Update a user
+// @Description Update a user with the input payload
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Param user body models.UserUpdateRequest true "Update user"
+// @Success 200 {object} models.User
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /users/{id} [put]
 
 func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
@@ -82,6 +117,17 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updatedUser)
 }
 
+// @Summary Delete a user
+// @Description Delete a user by ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 204 "No Content"
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /users/{id} [delete]
+
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -98,6 +144,15 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// @Summary List users
+// @Description Get a list of all users
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.User
+// @Failure 500 {object} ErrorResponse
+// @Router /users [get]
 
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	users, err := h.userService.List(r.Context())

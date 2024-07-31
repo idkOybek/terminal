@@ -13,14 +13,35 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	_ "github.com/idkOybek/newNewTerminal/docs"
 	"github.com/idkOybek/newNewTerminal/internal/config"
 	"github.com/idkOybek/newNewTerminal/internal/handler"
 	customMiddleware "github.com/idkOybek/newNewTerminal/internal/middleware"
 	"github.com/idkOybek/newNewTerminal/internal/repository/postgres"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/database"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )
+
+// @title Your API Title
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	// Initialize logger
@@ -68,6 +89,10 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(customMiddleware.LoggerMiddleware(logger))
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"), // Путь к JSON файлу с документацией
+	))
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {

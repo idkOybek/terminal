@@ -36,15 +36,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "User login",
+                "summary": "Login user",
                 "parameters": [
                     {
-                        "description": "Login credentials",
-                        "name": "user",
+                        "description": "User login credentials",
+                        "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginRequest"
+                            "$ref": "#/definitions/models.UserLoginRequest"
                         }
                     }
                 ],
@@ -52,7 +52,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.LoginResponse"
+                            "$ref": "#/definitions/models.UserLoginResponse"
                         }
                     },
                     "400": {
@@ -76,13 +76,54 @@ const docTemplate = `{
                 }
             }
         },
-        "/fiscal-modules": {
-            "get": {
-                "security": [
+        "/auth/register": {
+            "post": {
+                "description": "Register a new user with the given input",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
                     {
-                        "ApiKeyAuth": []
+                        "description": "User registration info",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserCreateRequest"
+                        }
                     }
                 ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/fiscal-modules": {
+            "get": {
                 "description": "Get a list of all fiscal modules",
                 "consumes": [
                     "application/json"
@@ -113,11 +154,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Create a new fiscal module with the given input",
                 "consumes": [
                     "application/json"
@@ -132,7 +168,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Create fiscal module request",
-                        "name": "module",
+                        "name": "fiscal_module",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -164,11 +200,6 @@ const docTemplate = `{
         },
         "/fiscal-modules/{id}": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Get details of a fiscal module by its ID",
                 "consumes": [
                     "application/json"
@@ -211,11 +242,6 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Update a fiscal module's details by its ID",
                 "consumes": [
                     "application/json"
@@ -237,7 +263,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "Update fiscal module request",
-                        "name": "module",
+                        "name": "fiscal_module",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -273,11 +299,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Delete a fiscal module by its ID",
                 "consumes": [
                     "application/json"
@@ -317,194 +338,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/links": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get a list of all links",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "links"
-                ],
-                "summary": "List all links",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Link"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Create a new link between fiscal number and factory number",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "links"
-                ],
-                "summary": "Create a new link",
-                "parameters": [
-                    {
-                        "description": "Create link request",
-                        "name": "link",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.LinkCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.Link"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/links/factory/{factoryNumber}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get details of a link by its factory number",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "links"
-                ],
-                "summary": "Get a link by factory number",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Factory Number",
-                        "name": "factoryNumber",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Link"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/links/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Delete a link by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "links"
-                ],
-                "summary": "Delete a link",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Link ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/terminals": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Get a list of all terminals",
                 "consumes": [
                     "application/json"
@@ -535,11 +370,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Create a new terminal with the given input",
                 "consumes": [
                     "application/json"
@@ -586,11 +416,6 @@ const docTemplate = `{
         },
         "/terminals/{id}": {
             "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Get details of a terminal by its ID",
                 "consumes": [
                     "application/json"
@@ -633,11 +458,6 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Update a terminal's details by its ID",
                 "consumes": [
                     "application/json"
@@ -695,11 +515,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Delete a terminal by its ID",
                 "consumes": [
                     "application/json"
@@ -751,7 +566,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "List users",
+                "summary": "List all users",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -771,7 +586,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new user with the input payload",
+                "description": "Create a new user with the given input",
                 "consumes": [
                     "application/json"
                 ],
@@ -784,7 +599,7 @@ const docTemplate = `{
                 "summary": "Create a new user",
                 "parameters": [
                     {
-                        "description": "Create user",
+                        "description": "Create user request",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -817,7 +632,7 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
-                "description": "Get a user by ID",
+                "description": "Get details of a user by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -859,7 +674,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update a user with the input payload",
+                "description": "Update a user's details by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -879,7 +694,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Update user",
+                        "description": "Update user request",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -916,7 +731,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a user by ID",
+                "description": "Delete a user by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -960,7 +775,7 @@ const docTemplate = `{
         "models.ErrorResponse": {
             "type": "object",
             "properties": {
-                "message": {
+                "error": {
                     "type": "string"
                 }
             }
@@ -1016,53 +831,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Link": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "factory_number": {
-                    "type": "string"
-                },
-                "fiscal_number": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.LinkCreateRequest": {
-            "type": "object",
-            "properties": {
-                "factory_number": {
-                    "type": "string"
-                },
-                "fiscal_number": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Terminal": {
             "type": "object",
             "properties": {
@@ -1081,22 +849,10 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "database_update_date": {
-                    "type": "string"
-                },
-                "free_record_balance": {
-                    "type": "integer"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "inn": {
-                    "type": "string"
-                },
-                "last_request_date": {
-                    "type": "string"
-                },
-                "module_number": {
                     "type": "string"
                 },
                 "status": {
@@ -1125,13 +881,7 @@ const docTemplate = `{
                 "company_name": {
                     "type": "string"
                 },
-                "free_record_balance": {
-                    "type": "integer"
-                },
                 "inn": {
-                    "type": "string"
-                },
-                "module_number": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1145,29 +895,17 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "assembly_number": {
-                    "type": "string"
-                },
                 "cash_register_number": {
                     "type": "string"
                 },
                 "company_name": {
                     "type": "string"
                 },
-                "free_record_balance": {
-                    "type": "integer"
-                },
                 "inn": {
-                    "type": "string"
-                },
-                "module_number": {
                     "type": "string"
                 },
                 "status": {
                     "type": "boolean"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -1179,12 +917,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
                 },
                 "is_admin": {
                     "type": "boolean"
@@ -1200,9 +932,6 @@ const docTemplate = `{
         "models.UserCreateRequest": {
             "type": "object",
             "properties": {
-                "inn": {
-                    "type": "string"
-                },
                 "is_admin": {
                     "type": "boolean"
                 },
@@ -1214,14 +943,33 @@ const docTemplate = `{
                 }
             }
         },
+        "models.UserLoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "models.UserUpdateRequest": {
             "type": "object",
             "properties": {
-                "inn": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
+                "id": {
+                    "type": "integer"
                 },
                 "is_admin": {
                     "type": "boolean"
@@ -1247,7 +995,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "newnewterminal.onrender.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Your API Title",

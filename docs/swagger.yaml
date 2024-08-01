@@ -2,7 +2,7 @@ basePath: /api
 definitions:
   models.ErrorResponse:
     properties:
-      message:
+      error:
         type: string
     type: object
   models.FiscalModule:
@@ -38,36 +38,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  models.Link:
-    properties:
-      created_at:
-        type: string
-      factory_number:
-        type: string
-      fiscal_number:
-        type: string
-      id:
-        type: integer
-    type: object
-  models.LinkCreateRequest:
-    properties:
-      factory_number:
-        type: string
-      fiscal_number:
-        type: string
-    type: object
-  models.LoginRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  models.LoginResponse:
-    properties:
-      token:
-        type: string
-    type: object
   models.Terminal:
     properties:
       address:
@@ -80,17 +50,9 @@ definitions:
         type: string
       created_at:
         type: string
-      database_update_date:
-        type: string
-      free_record_balance:
-        type: integer
       id:
         type: integer
       inn:
-        type: string
-      last_request_date:
-        type: string
-      module_number:
         type: string
       status:
         type: boolean
@@ -109,11 +71,7 @@ definitions:
         type: string
       company_name:
         type: string
-      free_record_balance:
-        type: integer
       inn:
-        type: string
-      module_number:
         type: string
       user_id:
         type: integer
@@ -122,22 +80,14 @@ definitions:
     properties:
       address:
         type: string
-      assembly_number:
-        type: string
       cash_register_number:
         type: string
       company_name:
         type: string
-      free_record_balance:
-        type: integer
       inn:
-        type: string
-      module_number:
         type: string
       status:
         type: boolean
-      user_id:
-        type: integer
     type: object
   models.User:
     properties:
@@ -145,10 +95,6 @@ definitions:
         type: string
       id:
         type: integer
-      inn:
-        type: string
-      is_active:
-        type: boolean
       is_admin:
         type: boolean
       updated_at:
@@ -158,21 +104,31 @@ definitions:
     type: object
   models.UserCreateRequest:
     properties:
-      inn:
-        type: string
       is_admin:
         type: boolean
       password:
         type: string
       username:
         type: string
+    type: object
+  models.UserLoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserLoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
     type: object
   models.UserUpdateRequest:
     properties:
-      inn:
-        type: string
-      is_active:
-        type: boolean
+      id:
+        type: integer
       is_admin:
         type: boolean
       password:
@@ -180,7 +136,7 @@ definitions:
       username:
         type: string
     type: object
-host: newnewterminal.onrender.com
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -200,19 +156,19 @@ paths:
       - application/json
       description: Authenticate a user and return a token
       parameters:
-      - description: Login credentials
+      - description: User login credentials
         in: body
-        name: user
+        name: credentials
         required: true
         schema:
-          $ref: '#/definitions/models.LoginRequest'
+          $ref: '#/definitions/models.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.LoginResponse'
+            $ref: '#/definitions/models.UserLoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -225,7 +181,37 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: User login
+      summary: Login user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with the given input
+      parameters:
+      - description: User registration info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Register a new user
       tags:
       - auth
   /fiscal-modules:
@@ -246,8 +232,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: List all fiscal modules
       tags:
       - fiscal-modules
@@ -258,7 +242,7 @@ paths:
       parameters:
       - description: Create fiscal module request
         in: body
-        name: module
+        name: fiscal_module
         required: true
         schema:
           $ref: '#/definitions/models.FiscalModuleCreateRequest'
@@ -277,8 +261,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Create a new fiscal module
       tags:
       - fiscal-modules
@@ -306,8 +288,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Delete a fiscal module
       tags:
       - fiscal-modules
@@ -336,8 +316,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Get a fiscal module by ID
       tags:
       - fiscal-modules
@@ -353,7 +331,7 @@ paths:
         type: integer
       - description: Update fiscal module request
         in: body
-        name: module
+        name: fiscal_module
         required: true
         schema:
           $ref: '#/definitions/models.FiscalModuleUpdateRequest'
@@ -376,125 +354,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Update a fiscal module
       tags:
       - fiscal-modules
-  /links:
-    get:
-      consumes:
-      - application/json
-      description: Get a list of all links
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Link'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: List all links
-      tags:
-      - links
-    post:
-      consumes:
-      - application/json
-      description: Create a new link between fiscal number and factory number
-      parameters:
-      - description: Create link request
-        in: body
-        name: link
-        required: true
-        schema:
-          $ref: '#/definitions/models.LinkCreateRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Link'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Create a new link
-      tags:
-      - links
-  /links/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a link by its ID
-      parameters:
-      - description: Link ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Delete a link
-      tags:
-      - links
-  /links/factory/{factoryNumber}:
-    get:
-      consumes:
-      - application/json
-      description: Get details of a link by its factory number
-      parameters:
-      - description: Factory Number
-        in: path
-        name: factoryNumber
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Link'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Get a link by factory number
-      tags:
-      - links
   /terminals:
     get:
       consumes:
@@ -513,8 +375,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: List all terminals
       tags:
       - terminals
@@ -544,8 +404,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Create a new terminal
       tags:
       - terminals
@@ -573,8 +431,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Delete a terminal
       tags:
       - terminals
@@ -603,8 +459,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Get a terminal by ID
       tags:
       - terminals
@@ -643,8 +497,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - ApiKeyAuth: []
       summary: Update a terminal
       tags:
       - terminals
@@ -666,15 +518,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: List users
+      summary: List all users
       tags:
       - users
     post:
       consumes:
       - application/json
-      description: Create a new user with the input payload
+      description: Create a new user with the given input
       parameters:
-      - description: Create user
+      - description: Create user request
         in: body
         name: user
         required: true
@@ -702,7 +554,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Delete a user by ID
+      description: Delete a user by its ID
       parameters:
       - description: User ID
         in: path
@@ -728,7 +580,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a user by ID
+      description: Get details of a user by its ID
       parameters:
       - description: User ID
         in: path
@@ -756,14 +608,14 @@ paths:
     put:
       consumes:
       - application/json
-      description: Update a user with the input payload
+      description: Update a user's details by its ID
       parameters:
       - description: User ID
         in: path
         name: id
         required: true
         type: integer
-      - description: Update user
+      - description: Update user request
         in: body
         name: user
         required: true

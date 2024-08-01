@@ -170,7 +170,7 @@ func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) Routes() chi.Router {
 	r := chi.NewRouter()
-	r.Post("/", h.Create)
+	// r.Post("/", h.Create)
 	r.Get("/{id}", h.GetByID)
 	r.Put("/{id}", h.Update)
 	r.Delete("/{id}", h.Delete)

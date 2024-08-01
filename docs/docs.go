@@ -124,6 +124,11 @@ const docTemplate = `{
         },
         "/fiscal-modules": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all fiscal modules",
                 "consumes": [
                     "application/json"

@@ -143,6 +143,7 @@ func (h *FiscalModuleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// @Security Bearer
 // @Summary List all fiscal modules
 // @Description Get a list of all fiscal modules
 // @Tags fiscal-modules
@@ -161,7 +162,6 @@ func (h *FiscalModuleHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	RespondWithJSON(w, http.StatusOK, modules)
 }
-
 
 func (h *FiscalModuleHandler) Routes() chi.Router {
 	r := chi.NewRouter()

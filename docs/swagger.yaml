@@ -147,7 +147,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Your API Title
+  title: I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
   version: "1.0"
 paths:
   /auth/login:
@@ -644,7 +644,7 @@ paths:
       tags:
       - users
 securityDefinitions:
-  ApiKeyAuth:
+  Bearer:
     in: header
     name: Authorization
     type: apiKey

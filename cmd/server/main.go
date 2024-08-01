@@ -25,7 +25,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title Your API Title
+// @title I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
 // @version 1.0
 // @description This is a sample server.
 // @termsOfService http://swagger.io/terms/
@@ -39,7 +39,7 @@ import (
 
 // @host newnewterminal.onrender.com
 // @BasePath /api
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
 

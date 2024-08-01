@@ -984,7 +984,7 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "Bearer": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -998,7 +998,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "newnewterminal.onrender.com",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "Your API Title",
+	Title:            "I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT",
 	Description:      "This is a sample server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

@@ -1,5 +1,3 @@
-// internal/repository/postgres/terminal_repository.go
-
 package postgres
 
 import (
@@ -7,43 +5,46 @@ import (
 	"database/sql"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/internal/repository"
 )
 
-type TerminalRepository struct {
+type TerminalRepo struct {
 	db *sql.DB
 }
 
-func NewTerminalRepository(db *sql.DB) *TerminalRepository {
-	return &TerminalRepository{db: db}
+func NewTerminalRepository(db *sql.DB) repository.TerminalRepository {
+	return &TerminalRepo{db: db}
 }
 
-func (r *TerminalRepository) Create(ctx context.Context, terminal *models.Terminal) error {
+func init() {
+    repository.NewTerminalRepository = NewTerminalRepository
+}
+
+
+func (r *TerminalRepo) Create(ctx context.Context, terminal *models.Terminal) error {
 	query := `
-		INSERT INTO terminals (inn, company_name, address, cash_register_number, module_number, assembly_number, status, user_id, free_record_balance)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-		RETURNING id, last_request_date, database_update_date, created_at, updated_at`
+        INSERT INTO terminals (assembly_number, inn, company_name, address, cash_register_number, status, user_id, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING id`
 
 	err := r.db.QueryRowContext(ctx, query,
-		terminal.INN, terminal.CompanyName, terminal.Address, terminal.CashRegisterNumber,
-		terminal.ModuleNumber, terminal.AssemblyNumber, terminal.Status, terminal.UserID, terminal.FreeRecordBalance,
-	).Scan(&terminal.ID, &terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.CreatedAt, &terminal.UpdatedAt)
+		terminal.AssemblyNumber, terminal.INN, terminal.CompanyName, terminal.Address,
+		terminal.CashRegisterNumber, terminal.Status, terminal.UserID, terminal.CreatedAt, terminal.UpdatedAt,
+	).Scan(&terminal.ID)
 
 	return err
 }
 
-func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
+func (r *TerminalRepo) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
 	query := `
-		SELECT id, inn, company_name, address, cash_register_number, module_number, assembly_number,
-			   last_request_date, database_update_date, status, user_id, free_record_balance, created_at, updated_at
-		FROM terminals
-		WHERE id = $1`
+        SELECT id, assembly_number, inn, company_name, address, cash_register_number, status, user_id, created_at, updated_at
+        FROM terminals
+        WHERE id = $1`
 
 	var terminal models.Terminal
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&terminal.ID, &terminal.INN, &terminal.CompanyName, &terminal.Address,
-		&terminal.CashRegisterNumber, &terminal.ModuleNumber, &terminal.AssemblyNumber,
-		&terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.Status,
-		&terminal.UserID, &terminal.FreeRecordBalance, &terminal.CreatedAt, &terminal.UpdatedAt,
+		&terminal.ID, &terminal.AssemblyNumber, &terminal.INN, &terminal.CompanyName, &terminal.Address,
+		&terminal.CashRegisterNumber, &terminal.Status, &terminal.UserID, &terminal.CreatedAt, &terminal.UpdatedAt,
 	)
 
 	if err != nil {
@@ -53,26 +54,21 @@ func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Termi
 	return &terminal, nil
 }
 
-func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Terminal) error {
+func (r *TerminalRepo) Update(ctx context.Context, terminal *models.Terminal) error {
 	query := `
-		UPDATE terminals
-		SET inn = $1, company_name = $2, address = $3, cash_register_number = $4,
-			module_number = $5, assembly_number = $6, last_request_date = $7,
-			database_update_date = $8, status = $9, user_id = $10,
-			free_record_balance = $11, updated_at = NOW()
-		WHERE id = $12`
+        UPDATE terminals
+        SET inn = $1, company_name = $2, address = $3, cash_register_number = $4, status = $5, updated_at = $6
+        WHERE id = $7`
 
 	_, err := r.db.ExecContext(ctx, query,
 		terminal.INN, terminal.CompanyName, terminal.Address, terminal.CashRegisterNumber,
-		terminal.ModuleNumber, terminal.AssemblyNumber, terminal.LastRequestDate,
-		terminal.DatabaseUpdateDate, terminal.Status, terminal.UserID,
-		terminal.FreeRecordBalance, terminal.ID,
+		terminal.Status, terminal.UpdatedAt, terminal.ID,
 	)
 
 	return err
 }
 
-func (r *TerminalRepository) Delete(ctx context.Context, id int) error {
+func (r *TerminalRepo) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM terminals WHERE id = $1`
 
 	_, err := r.db.ExecContext(ctx, query, id)
@@ -80,12 +76,11 @@ func (r *TerminalRepository) Delete(ctx context.Context, id int) error {
 	return err
 }
 
-func (r *TerminalRepository) List(ctx context.Context) ([]models.Terminal, error) {
+func (r *TerminalRepo) List(ctx context.Context) ([]*models.Terminal, error) {
 	query := `
-		SELECT id, inn, company_name, address, cash_register_number, module_number, assembly_number,
-			   last_request_date, database_update_date, status, user_id, free_record_balance, created_at, updated_at
-		FROM terminals
-		ORDER BY id`
+        SELECT id, assembly_number, inn, company_name, address, cash_register_number, status, user_id, created_at, updated_at
+        FROM terminals
+        ORDER BY id`
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -93,20 +88,36 @@ func (r *TerminalRepository) List(ctx context.Context) ([]models.Terminal, error
 	}
 	defer rows.Close()
 
-	var terminals []models.Terminal
+	var terminals []*models.Terminal
 	for rows.Next() {
 		var terminal models.Terminal
 		err := rows.Scan(
-			&terminal.ID, &terminal.INN, &terminal.CompanyName, &terminal.Address,
-			&terminal.CashRegisterNumber, &terminal.ModuleNumber, &terminal.AssemblyNumber,
-			&terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.Status,
-			&terminal.UserID, &terminal.FreeRecordBalance, &terminal.CreatedAt, &terminal.UpdatedAt,
+			&terminal.ID, &terminal.AssemblyNumber, &terminal.INN, &terminal.CompanyName, &terminal.Address,
+			&terminal.CashRegisterNumber, &terminal.Status, &terminal.UserID, &terminal.CreatedAt, &terminal.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		terminals = append(terminals, terminal)
+		terminals = append(terminals, &terminal)
 	}
 
 	return terminals, nil
+}
+
+func (r *TerminalRepo) GetByAssemblyNumber(ctx context.Context, assemblyNumber string) (*models.Terminal, error) {
+	query := `SELECT id, assembly_number, inn, company_name, address, cash_register_number, status, user_id, created_at, updated_at 
+              FROM terminals WHERE assembly_number = $1`
+
+	var terminal models.Terminal
+	err := r.db.QueryRowContext(ctx, query, assemblyNumber).Scan(
+		&terminal.ID, &terminal.AssemblyNumber, &terminal.INN, &terminal.CompanyName,
+		&terminal.Address, &terminal.CashRegisterNumber, &terminal.Status,
+		&terminal.UserID, &terminal.CreatedAt, &terminal.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &terminal, nil
 }

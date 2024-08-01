@@ -1,10 +1,7 @@
-// cmd/server/main.go
-
 package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -17,10 +14,14 @@ import (
 	"github.com/idkOybek/newNewTerminal/internal/config"
 	"github.com/idkOybek/newNewTerminal/internal/handler"
 	customMiddleware "github.com/idkOybek/newNewTerminal/internal/middleware"
-	"github.com/idkOybek/newNewTerminal/internal/repository/postgres"
+	"github.com/idkOybek/newNewTerminal/internal/repository"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/database"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 	httpSwagger "github.com/swaggo/http-swagger"
+
+	_ "github.com/idkOybek/newNewTerminal/internal/repository/postgres"
+
 	"go.uber.org/zap"
 )
 
@@ -36,19 +37,15 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host newnewterminal.onrender.com
+// @host localhost:8080
 // @BasePath /api
-
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
+
 func main() {
 	// Initialize logger
-	logger, err := zap.NewProduction()
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-	defer logger.Sync()
+	logger := logger.NewLogger()
 
 	// Load configuration
 	cfg, err := config.LoadConfig()
@@ -64,24 +61,18 @@ func main() {
 	defer db.Close()
 
 	// Initialize repositories
-	userRepo := postgres.NewUserRepository(db)
-	fiscalModuleRepo := postgres.NewFiscalModuleRepository(db)
-	terminalRepo := postgres.NewTerminalRepository(db)
-	linkRepo := postgres.NewLinkRepository(db)
+	repos := repository.NewRepositories(db)
 
 	// Initialize services
-	authService := service.NewAuthService(userRepo)
-	userService := service.NewUserService(userRepo)
-	fiscalModuleService := service.NewFiscalModuleService(fiscalModuleRepo)
-	terminalService := service.NewTerminalService(terminalRepo, linkRepo)
-	linkService := service.NewLinkService(linkRepo)
+	services := service.NewServices(service.Deps{
+		Repos: repos,
+	})
 
 	// Initialize handlers
-	authHandler := handler.NewAuthHandler(authService)
-	userHandler := handler.NewUserHandler(userService)
-	fiscalModuleHandler := handler.NewFiscalModuleHandler(fiscalModuleService)
-	terminalHandler := handler.NewTerminalHandler(terminalService)
-	linkHandler := handler.NewLinkHandler(linkService)
+	authHandler := handler.NewAuthHandler(services.Auth, logger)
+	userHandler := handler.NewUserHandler(services.User, logger)
+	fiscalModuleHandler := handler.NewFiscalModuleHandler(services.FiscalModule, logger)
+	terminalHandler := handler.NewTerminalHandler(services.Terminal, logger)
 
 	// Set up router
 	r := chi.NewRouter()
@@ -101,10 +92,9 @@ func main() {
 		r.Mount("/auth", authHandler.Routes())
 		r.Mount("/users", userHandler.Routes())
 		r.Group(func(r chi.Router) {
-			r.Use(customMiddleware.AuthMiddleware)
+			r.Use(customMiddleware.AuthMiddleware(logger))
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())
-			r.Mount("/links", linkHandler.Routes())
 		})
 	})
 

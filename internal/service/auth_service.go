@@ -11,63 +11,56 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthService interface {
-	Login(ctx context.Context, username, password string) (string, error)
-	Register(ctx context.Context, user *models.User) error
-}
-
-type authService struct {
+type AuthService struct {
 	userRepo repository.UserRepository
 }
 
-func NewAuthService(userRepo repository.UserRepository) AuthService {
-	return &authService{
+func NewAuthService(userRepo repository.UserRepository) *AuthService {
+	return &AuthService{
 		userRepo: userRepo,
 	}
 }
 
-func (s *authService) Login(ctx context.Context, username, password string) (string, error) {
-	user, err := s.userRepo.GetByUsername(ctx, username)
+func (s *AuthService) Register(ctx context.Context, req *models.UserCreateRequest) (*models.User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return "", errors.New("invalid username or password")
+		return nil, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		return "", errors.New("invalid username or password")
+	user := &models.User{
+		Username:  req.Username,
+		Password:  string(hashedPassword),
+		IsAdmin:   req.IsAdmin,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
-	// Generate JWT token
-	token, err := auth.GenerateToken(user.ID)
-	if err != nil {
-		return "", errors.New("failed to generate token")
-	}
-
-	return token, nil
-}
-
-func (s *authService) Register(ctx context.Context, user *models.User) error {
-	// Check if user already exists
-	existingUser, _ := s.userRepo.GetByUsername(ctx, user.Username)
-	if existingUser != nil {
-		return errors.New("username already exists")
-	}
-
-	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return errors.New("failed to hash password")
-	}
-
-	user.Password = string(hashedPassword)
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
-
-	// Save user to database
 	err = s.userRepo.Create(ctx, user)
 	if err != nil {
-		return errors.New("failed to create user")
+		return nil, err
 	}
 
-	return nil
+	return user, nil
+}
+
+func (s *AuthService) Login(ctx context.Context, req *models.UserLoginRequest) (*models.UserLoginResponse, error) {
+	user, err := s.userRepo.GetByUsername(ctx, req.Username)
+	if err != nil {
+		return nil, errors.New("invalid username or password")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		return nil, errors.New("invalid username or password")
+	}
+
+	token, err := auth.GenerateToken(user.ID, user.Username, user.IsAdmin)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.UserLoginResponse{
+		User:  *user,
+		Token: token,
+	}, nil
 }

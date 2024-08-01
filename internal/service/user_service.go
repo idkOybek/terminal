@@ -1,85 +1,83 @@
-// internal/service/user_service.go
-
 package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserServiceImpl struct {
+type UserService struct {
 	repo repository.UserRepository
 }
 
-func NewUserService(repo repository.UserRepository) *UserServiceImpl {
-	return &UserServiceImpl{
+func NewUserService(repo repository.UserRepository) *UserService {
+	return &UserService{
 		repo: repo,
 	}
 }
 
-func (s *UserServiceImpl) Create(ctx context.Context, userReq *models.UserCreateRequest) (*models.User, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.Password), bcrypt.DefaultCost)
+func (s *UserService) Create(ctx context.Context, user *models.UserCreateRequest) (*models.User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	user := &models.User{
-		INN:      userReq.INN,
-		Username: userReq.Username,
-		Password: string(hashedPassword),
-		IsActive: true,
-		IsAdmin:  userReq.IsAdmin,
+	newUser := &models.User{
+		Username:  user.Username,
+		Password:  string(hashedPassword),
+		IsAdmin:   user.IsAdmin,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
-	err = s.repo.Create(ctx, user)
+	err = s.repo.Create(ctx, newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return newUser, nil
 }
 
-func (s *UserServiceImpl) GetByID(ctx context.Context, id int) (*models.User, error) {
+func (s *UserService) GetByID(ctx context.Context, id int) (*models.User, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *UserServiceImpl) Update(ctx context.Context, id int, userReq *models.UserUpdateRequest) (*models.User, error) {
-	user, err := s.repo.GetByID(ctx, id)
+func (s *UserService) Update(ctx context.Context, user *models.UserUpdateRequest) (*models.User, error) {
+	existingUser, err := s.repo.GetByID(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	if userReq.INN != "" {
-		user.INN = userReq.INN
+	if user.Username != "" {
+		existingUser.Username = user.Username
 	}
-	if userReq.Username != "" {
-		user.Username = userReq.Username
-	}
-	if userReq.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.Password), bcrypt.DefaultCost)
+
+	if user.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return nil, err
 		}
-		user.Password = string(hashedPassword)
+		existingUser.Password = string(hashedPassword)
 	}
-	user.IsActive = userReq.IsActive
-	user.IsAdmin = userReq.IsAdmin
 
-	err = s.repo.Update(ctx, user)
+	existingUser.IsAdmin = user.IsAdmin
+	existingUser.UpdatedAt = time.Now()
+
+	err = s.repo.Update(ctx, existingUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return existingUser, nil
 }
 
-func (s *UserServiceImpl) Delete(ctx context.Context, id int) error {
+func (s *UserService) Delete(ctx context.Context, id int) error {
 	return s.repo.Delete(ctx, id)
 }
 
-func (s *UserServiceImpl) List(ctx context.Context) ([]models.User, error) {
+func (s *UserService) List(ctx context.Context) ([]*models.User, error) {
 	return s.repo.List(ctx)
 }

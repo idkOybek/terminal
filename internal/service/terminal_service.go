@@ -1,44 +1,43 @@
-// internal/service/terminal_service.go
-
 package service
 
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
 )
 
-type TerminalServiceImpl struct {
-	repo     repository.TerminalRepository
-	linkRepo repository.LinkRepository
+type TerminalService struct {
+	repo             repository.TerminalRepository
+	fiscalModuleRepo repository.FiscalModuleRepository
 }
 
-func NewTerminalService(repo repository.TerminalRepository, linkRepo repository.LinkRepository) *TerminalServiceImpl {
-	return &TerminalServiceImpl{
-		repo:     repo,
-		linkRepo: linkRepo,
+func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository) *TerminalService {
+	return &TerminalService{
+		repo:             repo,
+		fiscalModuleRepo: fiscalModuleRepo,
 	}
 }
 
-func (s *TerminalServiceImpl) Create(ctx context.Context, terminalReq *models.TerminalCreateRequest) (*models.Terminal, error) {
-	// Проверяем наличие связки
-	_, err := s.linkRepo.GetByFactoryNumber(ctx, terminalReq.ModuleNumber)
+func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {
+	// Check if fiscal module exists for the given assembly number
+	_, err := s.fiscalModuleRepo.GetByFactoryNumber(ctx, req.AssemblyNumber)
 	if err != nil {
-		return nil, errors.New("invalid module number: no link found")
+		return nil, errors.New("no fiscal module found for the given assembly number")
 	}
 
 	terminal := &models.Terminal{
-		INN:                terminalReq.INN,
-		CompanyName:        terminalReq.CompanyName,
-		Address:            terminalReq.Address,
-		CashRegisterNumber: terminalReq.CashRegisterNumber,
-		ModuleNumber:       terminalReq.ModuleNumber,
-		AssemblyNumber:     terminalReq.AssemblyNumber,
+		AssemblyNumber:     req.AssemblyNumber,
+		INN:                req.INN,
+		CompanyName:        req.CompanyName,
+		Address:            req.Address,
+		CashRegisterNumber: req.CashRegisterNumber,
 		Status:             true,
-		UserID:             terminalReq.UserID,
-		FreeRecordBalance:  terminalReq.FreeRecordBalance,
+		UserID:             req.UserID,
+		CreatedAt:          time.Now(),
+		UpdatedAt:          time.Now(),
 	}
 
 	err = s.repo.Create(ctx, terminal)
@@ -49,46 +48,22 @@ func (s *TerminalServiceImpl) Create(ctx context.Context, terminalReq *models.Te
 	return terminal, nil
 }
 
-func (s *TerminalServiceImpl) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
+func (s *TerminalService) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *TerminalServiceImpl) Update(ctx context.Context, id int, terminalReq *models.TerminalUpdateRequest) (*models.Terminal, error) {
+func (s *TerminalService) Update(ctx context.Context, id int, req *models.TerminalUpdateRequest) (*models.Terminal, error) {
 	terminal, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if terminalReq.INN != "" {
-		terminal.INN = terminalReq.INN
-	}
-	if terminalReq.CompanyName != "" {
-		terminal.CompanyName = terminalReq.CompanyName
-	}
-	if terminalReq.Address != "" {
-		terminal.Address = terminalReq.Address
-	}
-	if terminalReq.CashRegisterNumber != "" {
-		terminal.CashRegisterNumber = terminalReq.CashRegisterNumber
-	}
-	if terminalReq.ModuleNumber != "" {
-		// Проверяем наличие связки при изменении номера модуля
-		_, err := s.linkRepo.GetByFactoryNumber(ctx, terminalReq.ModuleNumber)
-		if err != nil {
-			return nil, errors.New("invalid module number: no link found")
-		}
-		terminal.ModuleNumber = terminalReq.ModuleNumber
-	}
-	if terminalReq.AssemblyNumber != "" {
-		terminal.AssemblyNumber = terminalReq.AssemblyNumber
-	}
-	terminal.Status = terminalReq.Status
-	if terminalReq.UserID != 0 {
-		terminal.UserID = terminalReq.UserID
-	}
-	if terminalReq.FreeRecordBalance != 0 {
-		terminal.FreeRecordBalance = terminalReq.FreeRecordBalance
-	}
+	terminal.INN = req.INN
+	terminal.CompanyName = req.CompanyName
+	terminal.Address = req.Address
+	terminal.CashRegisterNumber = req.CashRegisterNumber
+	terminal.Status = req.Status
+	terminal.UpdatedAt = time.Now()
 
 	err = s.repo.Update(ctx, terminal)
 	if err != nil {
@@ -98,10 +73,10 @@ func (s *TerminalServiceImpl) Update(ctx context.Context, id int, terminalReq *m
 	return terminal, nil
 }
 
-func (s *TerminalServiceImpl) Delete(ctx context.Context, id int) error {
+func (s *TerminalService) Delete(ctx context.Context, id int) error {
 	return s.repo.Delete(ctx, id)
 }
 
-func (s *TerminalServiceImpl) List(ctx context.Context) ([]models.Terminal, error) {
+func (s *TerminalService) List(ctx context.Context) ([]*models.Terminal, error) {
 	return s.repo.List(ctx)
 }

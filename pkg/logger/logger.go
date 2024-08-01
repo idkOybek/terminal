@@ -1,41 +1,21 @@
-// pkg/logger/logger.go
-
 package logger
 
 import (
-    "go.uber.org/zap"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-var log *zap.Logger
-
-func Init(level string) {
-    var err error
-
-    config := zap.NewProductionConfig()
-
-    err = config.Level.UnmarshalText([]byte(level))
-    if err != nil {
-        panic(err)
-    }
-
-    log, err = config.Build(zap.AddCallerSkip(1))
-    if err != nil {
-        panic(err)
-    }
+type Logger struct {
+	*zap.SugaredLogger
 }
 
-func Info(message string, fields ...zap.Field) {
-    log.Info(message, fields...)
-}
+func NewLogger() *Logger {
+	config := zap.NewProductionConfig()
+	config.EncoderConfig.TimeKey = "timestamp"
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
-func Warn(message string, fields ...zap.Field) {
-    log.Warn(message, fields...)
-}
+	logger, _ := config.Build()
+	sugar := logger.Sugar()
 
-func Error(message string, fields ...zap.Field) {
-    log.Error(message, fields...)
-}
-
-func Fatal(message string, fields ...zap.Field) {
-    log.Fatal(message, fields...)
+	return &Logger{sugar}
 }

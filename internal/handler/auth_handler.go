@@ -8,61 +8,80 @@ import (
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
-	"go.uber.org/zap"
 )
 
 type AuthHandler struct {
-	authService service.AuthService
+	service *service.AuthService
+	logger  *logger.Logger
 }
 
-func NewAuthHandler(authService service.AuthService) *AuthHandler {
+func NewAuthHandler(service *service.AuthService, logger *logger.Logger) *AuthHandler {
 	return &AuthHandler{
-		authService: authService,
+		service: service,
+		logger:  logger,
 	}
 }
 
-// @Summary User login
+// @Summary Register a new user
+// @Description Register a new user with the given input
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param user body models.UserCreateRequest true "User registration info"
+// @Success 201 {object} models.User
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /auth/register [post]
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+	var req models.UserCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	user, err := h.service.Register(r.Context(), &req)
+	if err != nil {
+		h.logger.Error("Failed to register user", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to register user")
+		return
+	}
+
+	RespondWithJSON(w, http.StatusCreated, user)
+}
+
+// @Summary Login user
 // @Description Authenticate a user and return a token
 // @Tags auth
 // @Accept  json
 // @Produce  json
-// @Param user body models.LoginRequest true "Login credentials"
-// @Success 200 {object} models.LoginResponse
+// @Param credentials body models.UserLoginRequest true "User login credentials"
+// @Success 200 {object} models.UserLoginResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 401 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var loginReq models.LoginRequest
-	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
-		logger.Error("Failed to decode login request", zap.Error(err))
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+	var req models.UserLoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	token, err := h.authService.Login(r.Context(), loginReq.Username, loginReq.Password)
+	resp, err := h.service.Login(r.Context(), &req)
 	if err != nil {
-		logger.Error("Failed to authenticate user", zap.Error(err))
-		respondWithError(w, http.StatusUnauthorized, "Invalid credentials")
+		h.logger.Error("Failed to login user", "error", err)
+		RespondWithError(w, http.StatusUnauthorized, "Invalid username or password")
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, models.LoginResponse{Token: token})
-}
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, models.ErrorResponse{Message: message})
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
+	RespondWithJSON(w, http.StatusOK, resp)
 }
 
 func (h *AuthHandler) Routes() chi.Router {
 	r := chi.NewRouter()
+	r.Post("/register", h.Register)
 	r.Post("/login", h.Login)
 	return r
 }

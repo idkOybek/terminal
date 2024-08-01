@@ -1,8 +1,7 @@
-// pkg/auth/jwt.go
-
 package auth
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -10,18 +9,22 @@ import (
 )
 
 type Claims struct {
-	UserID int `json:"user_id"`
+	UserID   int    `json:"user_id"`
+	Username string `json:"username"`
+	IsAdmin  bool   `json:"is_admin"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID int) (string, error) {
+func GenerateToken(userID int, username string, isAdmin bool) (string, error) {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		return "", err
 	}
 
 	claims := &Claims{
-		UserID: userID,
+		UserID:   userID,
+		Username: username,
+		IsAdmin:  isAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
@@ -37,9 +40,7 @@ func ValidateToken(tokenString string) (*Claims, error) {
 		return nil, err
 	}
 
-	claims := &Claims{}
-
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(cfg.JWTSecret), nil
 	})
 
@@ -47,9 +48,9 @@ func ValidateToken(tokenString string) (*Claims, error) {
 		return nil, err
 	}
 
-	if !token.Valid {
-		return nil, jwt.ErrSignatureInvalid
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims, nil
 	}
 
-	return claims, nil
+	return nil, errors.New("invalid token")
 }

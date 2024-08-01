@@ -1,5 +1,3 @@
-// internal/handler/terminal_handler.go
-
 package handler
 
 import (
@@ -10,15 +8,18 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/service"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type TerminalHandler struct {
-	terminalService service.TerminalService
+	service *service.TerminalService
+	logger  *logger.Logger
 }
 
-func NewTerminalHandler(terminalService service.TerminalService) *TerminalHandler {
+func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger) *TerminalHandler {
 	return &TerminalHandler{
-		terminalService: terminalService,
+		service: service,
+		logger:  logger,
 	}
 }
 
@@ -31,24 +32,23 @@ func NewTerminalHandler(terminalService service.TerminalService) *TerminalHandle
 // @Success 201 {object} models.Terminal
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /terminals [post]
 func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var terminal models.TerminalCreateRequest
-	if err := json.NewDecoder(r.Body).Decode(&terminal); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	var req models.TerminalCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	createdTerminal, err := h.terminalService.Create(r.Context(), &terminal)
+	terminal, err := h.service.Create(r.Context(), &req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to create terminal", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create terminal")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createdTerminal)
+	RespondWithJSON(w, http.StatusCreated, terminal)
 }
 
 // @Summary Get a terminal by ID
@@ -60,24 +60,23 @@ func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} models.Terminal
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /terminals/{id} [get]
 func (h *TerminalHandler) GetByID(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid terminal ID", http.StatusBadRequest)
+		h.logger.Error("Invalid terminal ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid terminal ID")
 		return
 	}
 
-	terminal, err := h.terminalService.GetByID(r.Context(), id)
+	terminal, err := h.service.GetByID(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		h.logger.Error("Failed to get terminal", "error", err)
+		RespondWithError(w, http.StatusNotFound, "Terminal not found")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(terminal)
+	RespondWithJSON(w, http.StatusOK, terminal)
 }
 
 // @Summary Update a terminal
@@ -91,30 +90,30 @@ func (h *TerminalHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /terminals/{id} [put]
 func (h *TerminalHandler) Update(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid terminal ID", http.StatusBadRequest)
+		h.logger.Error("Invalid terminal ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid terminal ID")
 		return
 	}
 
-	var terminal models.TerminalUpdateRequest
-	if err := json.NewDecoder(r.Body).Decode(&terminal); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	var req models.TerminalUpdateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	updatedTerminal, err := h.terminalService.Update(r.Context(), id, &terminal)
+	terminal, err := h.service.Update(r.Context(), id, &req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to update terminal", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to update terminal")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updatedTerminal)
+	RespondWithJSON(w, http.StatusOK, terminal)
 }
 
 // @Summary Delete a terminal
@@ -126,19 +125,18 @@ func (h *TerminalHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Success 204 "No Content"
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /terminals/{id} [delete]
 func (h *TerminalHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid terminal ID", http.StatusBadRequest)
+		h.logger.Error("Invalid terminal ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid terminal ID")
 		return
 	}
 
-	err = h.terminalService.Delete(r.Context(), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := h.service.Delete(r.Context(), id); err != nil {
+		h.logger.Error("Failed to delete terminal", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to delete terminal")
 		return
 	}
 
@@ -152,17 +150,16 @@ func (h *TerminalHandler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Success 200 {array} models.Terminal
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /terminals [get]
 func (h *TerminalHandler) List(w http.ResponseWriter, r *http.Request) {
-	terminals, err := h.terminalService.List(r.Context())
+	terminals, err := h.service.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to fetch terminals", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to fetch terminals")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(terminals)
+	RespondWithJSON(w, http.StatusOK, terminals)
 }
 
 func (h *TerminalHandler) Routes() chi.Router {

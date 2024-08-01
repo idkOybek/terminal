@@ -1,5 +1,3 @@
-// pkg/database/postgres.go
-
 package database
 
 import (

@@ -1,5 +1,3 @@
-// internal/repository/postgres/user_repository.go
-
 package postgres
 
 import (
@@ -7,39 +5,43 @@ import (
 	"database/sql"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/internal/repository"
 )
 
-type UserRepository struct {
+type UserRepo struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{db: db}
+func NewUserRepository(db *sql.DB) repository.UserRepository {
+	return &UserRepo{db: db}
 }
 
-func (r *UserRepository) Create(ctx context.Context, user *models.User) error {
+func init() {
+	repository.NewUserRepository = NewUserRepository
+}
+
+func (r *UserRepo) Create(ctx context.Context, user *models.User) error {
 	query := `
-		INSERT INTO users (inn, username, password, is_active, is_admin)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, created_at, updated_at`
+        INSERT INTO users (username, password, is_admin, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id`
 
 	err := r.db.QueryRowContext(ctx, query,
-		user.INN, user.Username, user.Password, user.IsActive, user.IsAdmin,
-	).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt)
+		user.Username, user.Password, user.IsAdmin, user.CreatedAt, user.UpdatedAt,
+	).Scan(&user.ID)
 
 	return err
 }
 
-func (r *UserRepository) GetByID(ctx context.Context, id int) (*models.User, error) {
+func (r *UserRepo) GetByID(ctx context.Context, id int) (*models.User, error) {
 	query := `
-		SELECT id, inn, username, password, is_active, is_admin, created_at, updated_at
-		FROM users
-		WHERE id = $1`
+        SELECT id, username, password, is_admin, created_at, updated_at
+        FROM users
+        WHERE id = $1`
 
 	var user models.User
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&user.ID, &user.INN, &user.Username, &user.Password,
-		&user.IsActive, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
+		&user.ID, &user.Username, &user.Password, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
 	)
 
 	if err != nil {
@@ -49,16 +51,15 @@ func (r *UserRepository) GetByID(ctx context.Context, id int) (*models.User, err
 	return &user, nil
 }
 
-func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
+func (r *UserRepo) GetByUsername(ctx context.Context, username string) (*models.User, error) {
 	query := `
-		SELECT id, inn, username, password, is_active, is_admin, created_at, updated_at
-		FROM users
-		WHERE username = $1`
+        SELECT id, username, password, is_admin, created_at, updated_at
+        FROM users
+        WHERE username = $1`
 
 	var user models.User
 	err := r.db.QueryRowContext(ctx, query, username).Scan(
-		&user.ID, &user.INN, &user.Username, &user.Password,
-		&user.IsActive, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
+		&user.ID, &user.Username, &user.Password, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
 	)
 
 	if err != nil {
@@ -68,20 +69,20 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*m
 	return &user, nil
 }
 
-func (r *UserRepository) Update(ctx context.Context, user *models.User) error {
+func (r *UserRepo) Update(ctx context.Context, user *models.User) error {
 	query := `
-		UPDATE users
-		SET inn = $1, username = $2, password = $3, is_active = $4, is_admin = $5, updated_at = NOW()
-		WHERE id = $6`
+        UPDATE users
+        SET username = $1, password = $2, is_admin = $3, updated_at = $4
+        WHERE id = $5`
 
 	_, err := r.db.ExecContext(ctx, query,
-		user.INN, user.Username, user.Password, user.IsActive, user.IsAdmin, user.ID,
+		user.Username, user.Password, user.IsAdmin, user.UpdatedAt, user.ID,
 	)
 
 	return err
 }
 
-func (r *UserRepository) Delete(ctx context.Context, id int) error {
+func (r *UserRepo) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM users WHERE id = $1`
 
 	_, err := r.db.ExecContext(ctx, query, id)
@@ -89,11 +90,11 @@ func (r *UserRepository) Delete(ctx context.Context, id int) error {
 	return err
 }
 
-func (r *UserRepository) List(ctx context.Context) ([]models.User, error) {
+func (r *UserRepo) List(ctx context.Context) ([]*models.User, error) {
 	query := `
-		SELECT id, inn, username, is_active, is_admin, created_at, updated_at
-		FROM users
-		ORDER BY id`
+        SELECT id, username, is_admin, created_at, updated_at
+        FROM users
+        ORDER BY id`
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -101,17 +102,16 @@ func (r *UserRepository) List(ctx context.Context) ([]models.User, error) {
 	}
 	defer rows.Close()
 
-	var users []models.User
+	var users []*models.User
 	for rows.Next() {
 		var user models.User
 		err := rows.Scan(
-			&user.ID, &user.INN, &user.Username,
-			&user.IsActive, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
+			&user.ID, &user.Username, &user.IsAdmin, &user.CreatedAt, &user.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+		users = append(users, &user)
 	}
 
 	return users, nil

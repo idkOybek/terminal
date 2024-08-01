@@ -1,5 +1,3 @@
-// internal/handler/fiscal_module_handler.go
-
 package handler
 
 import (
@@ -10,15 +8,18 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/service"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type FiscalModuleHandler struct {
-	fiscalModuleService service.FiscalModuleService
+	service *service.FiscalModuleService
+	logger  *logger.Logger
 }
 
-func NewFiscalModuleHandler(fiscalModuleService service.FiscalModuleService) *FiscalModuleHandler {
+func NewFiscalModuleHandler(service *service.FiscalModuleService, logger *logger.Logger) *FiscalModuleHandler {
 	return &FiscalModuleHandler{
-		fiscalModuleService: fiscalModuleService,
+		service: service,
+		logger:  logger,
 	}
 }
 
@@ -27,28 +28,27 @@ func NewFiscalModuleHandler(fiscalModuleService service.FiscalModuleService) *Fi
 // @Tags fiscal-modules
 // @Accept  json
 // @Produce  json
-// @Param module body models.FiscalModuleCreateRequest true "Create fiscal module request"
+// @Param fiscal_module body models.FiscalModuleCreateRequest true "Create fiscal module request"
 // @Success 201 {object} models.FiscalModule
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /fiscal-modules [post]
 func (h *FiscalModuleHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var module models.FiscalModuleCreateRequest
-	if err := json.NewDecoder(r.Body).Decode(&module); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	var req models.FiscalModuleCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	createdModule, err := h.fiscalModuleService.Create(r.Context(), &module)
+	module, err := h.service.Create(r.Context(), &req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to create fiscal module", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create fiscal module")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createdModule)
+	RespondWithJSON(w, http.StatusCreated, module)
 }
 
 // @Summary Get a fiscal module by ID
@@ -60,24 +60,23 @@ func (h *FiscalModuleHandler) Create(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} models.FiscalModule
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /fiscal-modules/{id} [get]
 func (h *FiscalModuleHandler) GetByID(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid fiscal module ID", http.StatusBadRequest)
+		h.logger.Error("Invalid fiscal module ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid fiscal module ID")
 		return
 	}
 
-	module, err := h.fiscalModuleService.GetByID(r.Context(), id)
+	module, err := h.service.GetByID(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		h.logger.Error("Failed to get fiscal module", "error", err)
+		RespondWithError(w, http.StatusNotFound, "Fiscal module not found")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(module)
+	RespondWithJSON(w, http.StatusOK, module)
 }
 
 // @Summary Update a fiscal module
@@ -86,35 +85,35 @@ func (h *FiscalModuleHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Fiscal Module ID"
-// @Param module body models.FiscalModuleUpdateRequest true "Update fiscal module request"
+// @Param fiscal_module body models.FiscalModuleUpdateRequest true "Update fiscal module request"
 // @Success 200 {object} models.FiscalModule
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /fiscal-modules/{id} [put]
 func (h *FiscalModuleHandler) Update(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid fiscal module ID", http.StatusBadRequest)
+		h.logger.Error("Invalid fiscal module ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid fiscal module ID")
 		return
 	}
 
-	var module models.FiscalModuleUpdateRequest
-	if err := json.NewDecoder(r.Body).Decode(&module); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	var req models.FiscalModuleUpdateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	updatedModule, err := h.fiscalModuleService.Update(r.Context(), id, &module)
+	module, err := h.service.Update(r.Context(), id, &req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to update fiscal module", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to update fiscal module")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updatedModule)
+	RespondWithJSON(w, http.StatusOK, module)
 }
 
 // @Summary Delete a fiscal module
@@ -126,19 +125,18 @@ func (h *FiscalModuleHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Success 204 "No Content"
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /fiscal-modules/{id} [delete]
 func (h *FiscalModuleHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "Invalid fiscal module ID", http.StatusBadRequest)
+		h.logger.Error("Invalid fiscal module ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid fiscal module ID")
 		return
 	}
 
-	err = h.fiscalModuleService.Delete(r.Context(), id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := h.service.Delete(r.Context(), id); err != nil {
+		h.logger.Error("Failed to delete fiscal module", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to delete fiscal module")
 		return
 	}
 
@@ -152,18 +150,18 @@ func (h *FiscalModuleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Success 200 {array} models.FiscalModule
 // @Failure 500 {object} models.ErrorResponse
-// @Security ApiKeyAuth
 // @Router /fiscal-modules [get]
 func (h *FiscalModuleHandler) List(w http.ResponseWriter, r *http.Request) {
-	modules, err := h.fiscalModuleService.List(r.Context())
+	modules, err := h.service.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Error("Failed to fetch fiscal modules", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to fetch fiscal modules")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(modules)
+	RespondWithJSON(w, http.StatusOK, modules)
 }
+
 
 func (h *FiscalModuleHandler) Routes() chi.Router {
 	r := chi.NewRouter()

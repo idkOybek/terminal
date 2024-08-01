@@ -1,5 +1,3 @@
-// internal/config/config.go
-
 package config
 
 import (
@@ -10,7 +8,6 @@ type Config struct {
 	ServerPort  string `mapstructure:"SERVER_PORT"`
 	DatabaseURL string `mapstructure:"DATABASE_URL"`
 	JWTSecret   string `mapstructure:"JWT_SECRET"`
-	LogLevel    string `mapstructure:"LOG_LEVEL"`
 }
 
 func LoadConfig() (config Config, err error) {

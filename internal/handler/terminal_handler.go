@@ -23,6 +23,7 @@ func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger)
 	}
 }
 
+// @Security Bearer
 // @Summary Create a new terminal
 // @Description Create a new terminal with the given input
 // @Tags terminals
@@ -51,6 +52,7 @@ func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusCreated, terminal)
 }
 
+// @Security Bearer
 // @Summary Get a terminal by ID
 // @Description Get details of a terminal by its ID
 // @Tags terminals
@@ -79,6 +81,7 @@ func (h *TerminalHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusOK, terminal)
 }
 
+// @Security Bearer
 // @Summary Update a terminal
 // @Description Update a terminal's details by its ID
 // @Tags terminals
@@ -116,6 +119,7 @@ func (h *TerminalHandler) Update(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusOK, terminal)
 }
 
+// @Security Bearer
 // @Summary Delete a terminal
 // @Description Delete a terminal by its ID
 // @Tags terminals
@@ -143,6 +147,7 @@ func (h *TerminalHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// @Security Bearer
 // @Summary List all terminals
 // @Description Get a list of all terminals
 // @Tags terminals

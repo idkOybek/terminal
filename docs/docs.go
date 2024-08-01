@@ -78,6 +78,11 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Register a new user with the given input",
                 "consumes": [
                     "application/json"
@@ -159,6 +164,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new fiscal module with the given input",
                 "consumes": [
                     "application/json"
@@ -205,6 +215,11 @@ const docTemplate = `{
         },
         "/fiscal-modules/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get details of a fiscal module by its ID",
                 "consumes": [
                     "application/json"
@@ -247,6 +262,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a fiscal module's details by its ID",
                 "consumes": [
                     "application/json"
@@ -304,6 +324,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a fiscal module by its ID",
                 "consumes": [
                     "application/json"
@@ -345,6 +370,11 @@ const docTemplate = `{
         },
         "/terminals": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all terminals",
                 "consumes": [
                     "application/json"
@@ -375,6 +405,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new terminal with the given input",
                 "consumes": [
                     "application/json"
@@ -421,6 +456,11 @@ const docTemplate = `{
         },
         "/terminals/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get details of a terminal by its ID",
                 "consumes": [
                     "application/json"
@@ -463,6 +503,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a terminal's details by its ID",
                 "consumes": [
                     "application/json"
@@ -520,6 +565,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a terminal by its ID",
                 "consumes": [
                     "application/json"
@@ -561,6 +611,11 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all users",
                 "consumes": [
                     "application/json"
@@ -589,54 +644,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "Create a new user with the given input",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Create a new user",
-                "parameters": [
-                    {
-                        "description": "Create user request",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UserCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
             }
         },
         "/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get details of a user by its ID",
                 "consumes": [
                     "application/json"
@@ -679,6 +695,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a user's details by its ID",
                 "consumes": [
                     "application/json"
@@ -736,6 +757,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a user by its ID",
                 "consumes": [
                     "application/json"

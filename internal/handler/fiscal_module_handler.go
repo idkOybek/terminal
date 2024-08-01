@@ -23,6 +23,7 @@ func NewFiscalModuleHandler(service *service.FiscalModuleService, logger *logger
 	}
 }
 
+// @Security Bearer
 // @Summary Create a new fiscal module
 // @Description Create a new fiscal module with the given input
 // @Tags fiscal-modules
@@ -51,6 +52,7 @@ func (h *FiscalModuleHandler) Create(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusCreated, module)
 }
 
+// @Security Bearer
 // @Summary Get a fiscal module by ID
 // @Description Get details of a fiscal module by its ID
 // @Tags fiscal-modules
@@ -79,6 +81,7 @@ func (h *FiscalModuleHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusOK, module)
 }
 
+// @Security Bearer
 // @Summary Update a fiscal module
 // @Description Update a fiscal module's details by its ID
 // @Tags fiscal-modules
@@ -116,6 +119,7 @@ func (h *FiscalModuleHandler) Update(w http.ResponseWriter, r *http.Request) {
 	RespondWithJSON(w, http.StatusOK, module)
 }
 
+// @Security Bearer
 // @Summary Delete a fiscal module
 // @Description Delete a fiscal module by its ID
 // @Tags fiscal-modules

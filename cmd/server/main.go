@@ -84,7 +84,7 @@ func main() {
 
 	// Swagger
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
+		httpSwagger.URL("docs/doc.json"),
 	))
 
 	// Routes

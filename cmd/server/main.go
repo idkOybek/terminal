@@ -15,6 +15,7 @@ import (
 	"github.com/idkOybek/newNewTerminal/internal/handler"
 	customMiddleware "github.com/idkOybek/newNewTerminal/internal/middleware"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
+	_ "github.com/idkOybek/newNewTerminal/internal/repository/postgres"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/database"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
@@ -42,7 +43,6 @@ import (
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
 func main() {
 	// Initialize logger
 	logger := logger.NewLogger()
@@ -60,6 +60,9 @@ func main() {
 	}
 	defer db.Close()
 
+	if err := db.Ping(); err != nil {
+		logger.Fatal("Failed to ping database", zap.Error(err))
+	}
 	// Initialize repositories
 	repos := repository.NewRepositories(db)
 

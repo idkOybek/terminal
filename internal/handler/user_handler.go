@@ -23,34 +23,34 @@ func NewUserHandler(service *service.UserService, logger *logger.Logger) *UserHa
 	}
 }
 
-// // @Security Bearer
-// // @Summary Create a new user
-// // @Description Create a new user with the given input
-// // @Tags users
-// // @Accept  json
-// // @Produce  json
-// // @Param user body models.UserCreateRequest true "Create user request"
-// // @Success 201 {object} models.User
-// // @Failure 400 {object} models.ErrorResponse
-// // @Failure 500 {object} models.ErrorResponse
-// // @Router /users [post]
-// func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-//     var req models.UserCreateRequest
-//     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-//         h.logger.Error("Failed to decode request body", "error", err)
-//         RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-//         return
-//     }
+// @Security Bearer
+// @Summary Create a new user
+// @Description Create a new user with the given input
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param user body models.UserCreateRequest true "Create user request"
+// @Success 201 {object} models.User
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /users [post]
+func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var req models.UserCreateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
 
-//     user, err := h.service.Create(r.Context(), &req)
-//     if err != nil {
-//         h.logger.Error("Failed to create user", "error", err)
-//         RespondWithError(w, http.StatusInternalServerError, "Failed to create user")
-//         return
-//     }
+	user, err := h.service.Create(r.Context(), &req)
+	if err != nil {
+		h.logger.Error("Failed to create user", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create user")
+		return
+	}
 
-//     RespondWithJSON(w, http.StatusCreated, user)
-// }
+	RespondWithJSON(w, http.StatusCreated, user)
+}
 
 // @Security Bearer
 // @Summary Get a user by ID

@@ -16,27 +16,27 @@ func NewUserService(repo repository.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-// func (s *UserService) Create(ctx context.Context, req *models.UserCreateRequest) (*models.User, error) {
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (s *UserService) Create(ctx context.Context, req *models.UserCreateRequest) (*models.User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 
-// 	user := &models.User{
-// 		INN:      req.INN,
-// 		Username: req.Username,
-// 		Password: string(hashedPassword),
-// 		IsActive: req.IsActive,
-// 		IsAdmin:  req.IsAdmin,
-// 	}
+	user := &models.User{
+		INN:      req.INN,
+		Username: req.Username,
+		Password: string(hashedPassword),
+		IsActive: req.IsActive,
+		IsAdmin:  req.IsAdmin,
+	}
 
-// 	err = s.repo.Create(ctx, user)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	err = s.repo.Create(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return user, nil
-// }
+	return user, nil
+}
 
 func (s *UserService) GetByID(ctx context.Context, id int) (*models.User, error) {
 	return s.repo.GetByID(ctx, id)

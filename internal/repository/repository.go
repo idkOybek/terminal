@@ -3,8 +3,10 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/internal/repository/postgres"
 )
 
 type Repositories struct {
@@ -25,7 +27,6 @@ type UserRepository interface {
 type FiscalModuleRepository interface {
 	Create(ctx context.Context, module *models.FiscalModule) error
 	GetByID(ctx context.Context, id int) (*models.FiscalModule, error)
-	GetByFactoryNumber(ctx context.Context, factoryNumber string) (*models.FiscalModule, error)
 	Update(ctx context.Context, module *models.FiscalModule) error
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]*models.FiscalModule, error)
@@ -34,17 +35,19 @@ type FiscalModuleRepository interface {
 type TerminalRepository interface {
 	Create(ctx context.Context, terminal *models.Terminal) error
 	GetByID(ctx context.Context, id int) (*models.Terminal, error)
-	GetByAssemblyNumber(ctx context.Context, assemblyNumber string) (*models.Terminal, error)
 	Update(ctx context.Context, terminal *models.Terminal) error
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]*models.Terminal, error)
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
+	if db == nil {
+		log.Fatal("Database connection is nil")
+	}
 	return &Repositories{
-		User:         NewUserRepository(db),
-		FiscalModule: NewFiscalModuleRepository(db),
-		Terminal:     NewTerminalRepository(db),
+		User:         postgres.NewUserRepository(db),
+		FiscalModule: postgres.NewFiscalModuleRepository(db),
+		Terminal:     postgres.NewTerminalRepository(db),
 	}
 }
 
@@ -52,9 +55,3 @@ func NewRepositories(db *sql.DB) *Repositories {
 type UserRepoCreator func(*sql.DB) UserRepository
 type FiscalModuleRepoCreator func(*sql.DB) FiscalModuleRepository
 type TerminalRepoCreator func(*sql.DB) TerminalRepository
-
-var (
-	NewUserRepository         UserRepoCreator
-	NewFiscalModuleRepository FiscalModuleRepoCreator
-	NewTerminalRepository     TerminalRepoCreator
-)

@@ -78,11 +78,6 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Register a new user with the given input",
                 "consumes": [
                     "application/json"

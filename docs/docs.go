@@ -151,7 +151,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.FiscalModule"
+                                "$ref": "#/definitions/models.FiscalModuleResponse"
                             }
                         }
                     },
@@ -195,7 +195,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModule"
+                            "$ref": "#/definitions/models.FiscalModuleResponse"
                         }
                     },
                     "400": {
@@ -244,7 +244,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModule"
+                            "$ref": "#/definitions/models.FiscalModuleResponse"
                         }
                     },
                     "404": {
@@ -300,7 +300,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModule"
+                            "$ref": "#/definitions/models.FiscalModuleResponse"
                         }
                     },
                     "400": {
@@ -811,29 +811,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.FiscalModule": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "factory_number": {
-                    "type": "string"
-                },
-                "fiscal_number": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.FiscalModuleCreateRequest": {
             "type": "object",
             "properties": {
@@ -842,6 +819,23 @@ const docTemplate = `{
                 },
                 "fiscal_number": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.FiscalModuleResponse": {
+            "type": "object",
+            "properties": {
+                "factory_number": {
+                    "type": "string"
+                },
+                "fiscal_number": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "user_id": {
                     "type": "integer"
@@ -880,14 +874,26 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "database_update_date": {
+                    "type": "string"
+                },
+                "free_record_balance": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "inn": {
                     "type": "string"
                 },
+                "last_request_date": {
+                    "type": "string"
+                },
+                "module_number": {
+                    "type": "string"
+                },
                 "status": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -912,7 +918,22 @@ const docTemplate = `{
                 "company_name": {
                     "type": "string"
                 },
+                "database_update_date": {
+                    "type": "string"
+                },
+                "free_record_balance": {
+                    "type": "integer"
+                },
                 "inn": {
+                    "type": "string"
+                },
+                "last_request_date": {
+                    "type": "string"
+                },
+                "module_number": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 },
                 "user_id": {
@@ -926,17 +947,35 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
+                "assembly_number": {
+                    "type": "string"
+                },
                 "cash_register_number": {
                     "type": "string"
                 },
                 "company_name": {
                     "type": "string"
                 },
+                "database_update_date": {
+                    "type": "string"
+                },
+                "free_record_balance": {
+                    "type": "integer"
+                },
                 "inn": {
                     "type": "string"
                 },
+                "last_request_date": {
+                    "type": "string"
+                },
+                "module_number": {
+                    "type": "string"
+                },
                 "status": {
-                    "type": "boolean"
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -949,8 +988,17 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "inn": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "is_admin": {
                     "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -963,6 +1011,12 @@ const docTemplate = `{
         "models.UserCreateRequest": {
             "type": "object",
             "properties": {
+                "inn": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "is_admin": {
                     "type": "boolean"
                 },
@@ -999,8 +1053,11 @@ const docTemplate = `{
         "models.UserUpdateRequest": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
+                "inn": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "is_admin": {
                     "type": "boolean"

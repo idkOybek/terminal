@@ -5,27 +5,23 @@ definitions:
       error:
         type: string
     type: object
-  models.FiscalModule:
-    properties:
-      created_at:
-        type: string
-      factory_number:
-        type: string
-      fiscal_number:
-        type: string
-      id:
-        type: integer
-      updated_at:
-        type: string
-      user_id:
-        type: integer
-    type: object
   models.FiscalModuleCreateRequest:
     properties:
       factory_number:
         type: string
       fiscal_number:
         type: string
+      user_id:
+        type: integer
+    type: object
+  models.FiscalModuleResponse:
+    properties:
+      factory_number:
+        type: string
+      fiscal_number:
+        type: string
+      id:
+        type: integer
       user_id:
         type: integer
     type: object
@@ -50,12 +46,20 @@ definitions:
         type: string
       created_at:
         type: string
+      database_update_date:
+        type: string
+      free_record_balance:
+        type: integer
       id:
         type: integer
       inn:
         type: string
+      last_request_date:
+        type: string
+      module_number:
+        type: string
       status:
-        type: boolean
+        type: string
       updated_at:
         type: string
       user_id:
@@ -71,7 +75,17 @@ definitions:
         type: string
       company_name:
         type: string
+      database_update_date:
+        type: string
+      free_record_balance:
+        type: integer
       inn:
+        type: string
+      last_request_date:
+        type: string
+      module_number:
+        type: string
+      status:
         type: string
       user_id:
         type: integer
@@ -80,14 +94,26 @@ definitions:
     properties:
       address:
         type: string
+      assembly_number:
+        type: string
       cash_register_number:
         type: string
       company_name:
         type: string
+      database_update_date:
+        type: string
+      free_record_balance:
+        type: integer
       inn:
         type: string
+      last_request_date:
+        type: string
+      module_number:
+        type: string
       status:
-        type: boolean
+        type: string
+      user_id:
+        type: integer
     type: object
   models.User:
     properties:
@@ -95,8 +121,14 @@ definitions:
         type: string
       id:
         type: integer
+      inn:
+        type: string
+      is_active:
+        type: boolean
       is_admin:
         type: boolean
+      password:
+        type: string
       updated_at:
         type: string
       username:
@@ -104,6 +136,10 @@ definitions:
     type: object
   models.UserCreateRequest:
     properties:
+      inn:
+        type: string
+      is_active:
+        type: boolean
       is_admin:
         type: boolean
       password:
@@ -127,8 +163,10 @@ definitions:
     type: object
   models.UserUpdateRequest:
     properties:
-      id:
-        type: integer
+      inn:
+        type: string
+      is_active:
+        type: boolean
       is_admin:
         type: boolean
       password:
@@ -228,7 +266,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.FiscalModule'
+              $ref: '#/definitions/models.FiscalModuleResponse'
             type: array
         "500":
           description: Internal Server Error
@@ -256,7 +294,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.FiscalModule'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "400":
           description: Bad Request
           schema:
@@ -315,7 +353,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.FiscalModule'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "404":
           description: Not Found
           schema:
@@ -351,7 +389,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.FiscalModule'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "400":
           description: Bad Request
           schema:

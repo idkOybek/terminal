@@ -22,3 +22,10 @@ type FiscalModuleUpdateRequest struct {
 	FactoryNumber string `json:"factory_number"`
 	UserID        int    `json:"user_id"`
 }
+
+type FiscalModuleResponse struct {
+	ID            int    `json:"id"`
+	FiscalNumber  string `json:"fiscal_number"`
+	FactoryNumber string `json:"factory_number"`
+	UserID        int    `json:"user_id"`
+}

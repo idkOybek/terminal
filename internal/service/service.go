@@ -20,6 +20,6 @@ func NewServices(deps Deps) *Services {
 		Auth:         NewAuthService(deps.Repos.User),
 		User:         NewUserService(deps.Repos.User),
 		FiscalModule: NewFiscalModuleService(deps.Repos.FiscalModule),
-		Terminal:     NewTerminalService(deps.Repos.Terminal, deps.Repos.FiscalModule),
+		Terminal:     NewTerminalService(deps.Repos.Terminal),
 	}
 }

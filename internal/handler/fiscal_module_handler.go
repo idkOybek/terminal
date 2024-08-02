@@ -30,7 +30,7 @@ func NewFiscalModuleHandler(service *service.FiscalModuleService, logger *logger
 // @Accept  json
 // @Produce  json
 // @Param fiscal_module body models.FiscalModuleCreateRequest true "Create fiscal module request"
-// @Success 201 {object} models.FiscalModule
+// @Success 201 {object} models.FiscalModuleResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /fiscal-modules [post]
@@ -59,7 +59,7 @@ func (h *FiscalModuleHandler) Create(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "Fiscal Module ID"
-// @Success 200 {object} models.FiscalModule
+// @Success 200 {object} models.FiscalModuleResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /fiscal-modules/{id} [get]
@@ -89,7 +89,7 @@ func (h *FiscalModuleHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param id path int true "Fiscal Module ID"
 // @Param fiscal_module body models.FiscalModuleUpdateRequest true "Update fiscal module request"
-// @Success 200 {object} models.FiscalModule
+// @Success 200 {object} models.FiscalModuleResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
@@ -153,7 +153,7 @@ func (h *FiscalModuleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Tags fiscal-modules
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} models.FiscalModule
+// @Success 200 {array} models.FiscalModuleResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /fiscal-modules [get]
 func (h *FiscalModuleHandler) List(w http.ResponseWriter, r *http.Request) {

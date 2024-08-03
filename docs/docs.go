@@ -160,8 +160,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Name of the CSV file",
-                        "name": "filename",
+                        "description": "Name of the site",
+                        "name": "siteName",
                         "in": "query",
                         "required": true
                     }

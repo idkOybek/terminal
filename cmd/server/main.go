@@ -76,7 +76,7 @@ func main() {
 	userHandler := handler.NewUserHandler(services.User, logger)
 	fiscalModuleHandler := handler.NewFiscalModuleHandler(services.FiscalModule, logger)
 	terminalHandler := handler.NewTerminalHandler(services.Terminal, logger)
-	exportHandler := handler.NewExportHandler(logger)
+	exportHandler := handler.NewExportHandler(logger, services.User)
 
 	// Set up router
 	r := chi.NewRouter()

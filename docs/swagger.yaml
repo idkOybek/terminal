@@ -5,6 +5,16 @@ definitions:
       error:
         type: string
     type: object
+  models.ExportRequest:
+    properties:
+      filename:
+        type: string
+      objects:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+    type: object
   models.FiscalModuleCreateRequest:
     properties:
       factory_number:
@@ -260,18 +270,12 @@ paths:
       - application/json
       description: Export given data to CSV format
       parameters:
-      - description: Data to export
+      - description: Export request
         in: body
-        name: data
+        name: request
         required: true
         schema:
-          items:
-            type: object
-          type: array
-      - description: Name of the CSV file (without extension)
-        in: query
-        name: filename
-        type: string
+          $ref: '#/definitions/models.ExportRequest'
       produces:
       - text/csv
       responses:

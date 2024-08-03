@@ -147,22 +147,13 @@ const docTemplate = `{
                 "summary": "Export data to CSV",
                 "parameters": [
                     {
-                        "description": "Data to export",
-                        "name": "data",
+                        "description": "Export request",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
+                            "$ref": "#/definitions/models.ExportRequest"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Name of the CSV file (without extension)",
-                        "name": "filename",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -917,6 +908,21 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ExportRequest": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "objects": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 }
             }
         },

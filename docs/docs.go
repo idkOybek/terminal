@@ -129,6 +129,11 @@ const docTemplate = `{
         },
         "/export": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Export given data to CSV format",
                 "consumes": [
                     "application/json"

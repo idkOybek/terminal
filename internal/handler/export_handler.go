@@ -18,6 +18,7 @@ func NewExportHandler(logger *logger.Logger) *ExportHandler {
 	}
 }
 
+// @Security Bearer
 // @Summary Export data to CSV
 // @Description Export given data to CSV format
 // @Tags export

@@ -254,6 +254,43 @@ paths:
       summary: Register a new user
       tags:
       - auth
+  /export:
+    post:
+      consumes:
+      - application/json
+      description: Export given data to CSV format
+      parameters:
+      - description: Data to export
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            type: object
+          type: array
+      - description: Name of the CSV file
+        in: query
+        name: filename
+        required: true
+        type: string
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: exported_data.csv
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Export data to CSV
+      tags:
+      - export
   /fiscal-modules:
     get:
       consumes:

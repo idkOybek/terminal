@@ -76,6 +76,7 @@ func main() {
 	userHandler := handler.NewUserHandler(services.User, logger)
 	fiscalModuleHandler := handler.NewFiscalModuleHandler(services.FiscalModule, logger)
 	terminalHandler := handler.NewTerminalHandler(services.Terminal, logger)
+	exportHandler := handler.NewExportHandler(logger)
 
 	// Set up router
 	r := chi.NewRouter()
@@ -93,11 +94,12 @@ func main() {
 	// Routes
 	r.Route("/api", func(r chi.Router) {
 		r.Mount("/auth", authHandler.Routes())
-		r.Mount("/users", userHandler.Routes())
 		r.Group(func(r chi.Router) {
 			r.Use(customMiddleware.AuthMiddleware(logger))
+			r.Mount("/users", userHandler.Routes())
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())
+			r.Post("/export", exportHandler.ExportCSV)
 		})
 	})
 

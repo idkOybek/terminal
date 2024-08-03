@@ -27,7 +27,7 @@ import (
 )
 
 // @title I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
-// @version 3.20
+// @version 3.22
 // @description This is a sample server.
 // @termsOfService http://swagger.io/terms/
 

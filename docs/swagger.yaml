@@ -249,6 +249,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Register a new user
       tags:
       - auth

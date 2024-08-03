@@ -28,6 +28,25 @@ func (r *FiscalModuleRepository) Create(ctx context.Context, module *models.Fisc
 	return err
 }
 
+func (r *FiscalModuleRepository) GetByFactoryNumber(ctx context.Context, factoryNumber string) (*models.FiscalModule, error) {
+	query := `SELECT id, fiscal_number, factory_number, user_id, created_at, updated_at FROM fiscal_modules WHERE factory_number = $1`
+
+	var module models.FiscalModule
+	err := r.db.QueryRowContext(ctx, query, factoryNumber).Scan(
+		&module.ID, &module.FiscalNumber, &module.FactoryNumber,
+		&module.UserID, &module.CreatedAt, &module.UpdatedAt,
+	)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &module, nil
+}
+
 func (r *FiscalModuleRepository) GetByID(ctx context.Context, id int) (*models.FiscalModule, error) {
 	query := `
         SELECT id, fiscal_number, factory_number, user_id, created_at, updated_at

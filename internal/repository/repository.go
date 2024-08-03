@@ -27,6 +27,7 @@ type UserRepository interface {
 type FiscalModuleRepository interface {
 	Create(ctx context.Context, module *models.FiscalModule) error
 	GetByID(ctx context.Context, id int) (*models.FiscalModule, error)
+	GetByFactoryNumber(ctx context.Context, factoryNumber string) (*models.FiscalModule, error)
 	Update(ctx context.Context, module *models.FiscalModule) error
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]*models.FiscalModule, error)

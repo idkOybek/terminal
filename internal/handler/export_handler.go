@@ -32,20 +32,21 @@ func NewExportHandler(logger *logger.Logger, userService *service.UserService) *
 // @Accept json
 // @Produce text/csv
 // @Param data body []interface{} true "Data to export"
-// @Param siteName query string true "Name of the site"
+// @Param filename query string false "Name of the CSV file (without extension)"
 // @Success 200 {file} string "exported_data.csv"
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /export [post]
 func (h *ExportHandler) ExportCSV(w http.ResponseWriter, r *http.Request) {
-	// Получаем имя сайта из query параметров
-	siteName := r.URL.Query().Get("siteName")
-	if siteName == "" {
-		siteName = "default"
+	// Получаем имя файла из query параметров
+	filename := r.URL.Query().Get("filename")
+	if filename == "" {
+		// Если имя файла не указано, используем текущую дату и время
+		filename = fmt.Sprintf("export_%s", time.Now().Format("2006-01-02_15-04-05"))
 	}
 
-	// Формируем имя файла
-	filename := fmt.Sprintf("%s_export_%s.csv", siteName, time.Now().Format("2006-01-02_15-04-05"))
+	// Добавляем расширение .csv
+	filename = filename + ".csv"
 
 	// Декодируем JSON данные из тела запроса
 	var data []map[string]interface{}
@@ -69,7 +70,7 @@ func (h *ExportHandler) ExportCSV(w http.ResponseWriter, r *http.Request) {
 
 	// Устанавливаем заголовки для CSV файла
 	w.Header().Set("Content-Type", "text/csv")
-	w.Header().Set("Content-Disposition", "attachment;filename="+filename)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
 
 	// Записываем данные в CSV
 	err = csv.WriteCSV(data, w)

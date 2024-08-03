@@ -13,7 +13,7 @@
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "1.0"
+        "version": "3.20"
     },
     "host": "newnewterminal.onrender.com",
     "basePath": "/api",
@@ -154,10 +154,9 @@
                     },
                     {
                         "type": "string",
-                        "description": "Name of the site",
-                        "name": "siteName",
-                        "in": "query",
-                        "required": true
+                        "description": "Name of the CSV file (without extension)",
+                        "name": "filename",
+                        "in": "query"
                     }
                 ],
                 "responses": {

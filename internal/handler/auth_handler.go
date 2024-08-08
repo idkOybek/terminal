@@ -83,5 +83,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Routes() chi.Router {
 	r := chi.NewRouter()
 	r.Post("/register", h.Register)
+	r.Post("/login", h.Login)
 	return r
 }

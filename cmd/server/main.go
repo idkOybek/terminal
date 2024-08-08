@@ -103,11 +103,10 @@ func main() {
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {
-		r.Post("/auth", authHandler.Login)
+		r.Mount("/auth", authHandler.Routes())
 		r.Post("/terminals", terminalHandler.Create)
 		r.Group(func(r chi.Router) {
 			r.Use(customMiddleware.AuthMiddleware(logger))
-			r.Mount("/auth", authHandler.Routes())
 			r.Mount("/users", userHandler.Routes())
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())

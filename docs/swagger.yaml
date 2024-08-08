@@ -196,7 +196,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
   title: I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
-  version: "3.20"
+  version: "3.22"
 paths:
   /auth/login:
     post:
@@ -498,8 +498,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - Bearer: []
       summary: Create a new terminal
       tags:
       - terminals

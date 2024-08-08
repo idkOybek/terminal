@@ -456,11 +456,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Create a new terminal with the given input",
                 "consumes": [
                     "application/json"
@@ -1197,7 +1192,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "3.20",
+	Version:          "3.22",
 	Host:             "newnewterminal.onrender.com",
 	BasePath:         "/api",
 	Schemes:          []string{},

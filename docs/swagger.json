@@ -13,7 +13,7 @@
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "3.20"
+        "version": "3.22"
     },
     "host": "newnewterminal.onrender.com",
     "basePath": "/api",
@@ -450,11 +450,6 @@
                 }
             },
             "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "description": "Create a new terminal with the given input",
                 "consumes": [
                     "application/json"

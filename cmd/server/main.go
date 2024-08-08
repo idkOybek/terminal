@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	_ "github.com/idkOybek/newNewTerminal/docs"
 	"github.com/idkOybek/newNewTerminal/internal/config"
 	"github.com/idkOybek/newNewTerminal/internal/handler"
@@ -26,8 +27,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
-// @version 3.22
+// @title Terminal Backend
+// @version 3.25
 // @description This is a sample server.
 // @termsOfService http://swagger.io/terms/
 
@@ -38,7 +39,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host newnewterminal.onrender.com
+// @host localhost:8080
 // @BasePath /api
 // @securityDefinitions.apikey Bearer
 // @in header
@@ -86,6 +87,15 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(customMiddleware.LoggerMiddleware(logger))
 
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
 	// Swagger
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("docs/doc.json"),
@@ -93,10 +103,11 @@ func main() {
 
 	// Routes
 	r.Route("/api", func(r chi.Router) {
-		r.Mount("/auth", authHandler.Routes())
+		r.Post("/auth", authHandler.Login)
 		r.Post("/terminals", terminalHandler.Create)
 		r.Group(func(r chi.Router) {
 			r.Use(customMiddleware.AuthMiddleware(logger))
+			r.Mount("/auth", authHandler.Routes())
 			r.Mount("/users", userHandler.Routes())
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())

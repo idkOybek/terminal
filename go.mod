@@ -5,6 +5,7 @@ go 1.22.4
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/cors v1.2.1
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.19.0
 	github.com/swaggo/http-swagger v1.3.4

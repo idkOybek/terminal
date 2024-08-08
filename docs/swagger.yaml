@@ -184,7 +184,7 @@ definitions:
       username:
         type: string
     type: object
-host: newnewterminal.onrender.com
+host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -195,8 +195,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT
-  version: "3.22"
+  title: Terminal Backend
+  version: "3.25"
 paths:
   /auth/login:
     post:

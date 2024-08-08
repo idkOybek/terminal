@@ -1192,11 +1192,11 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "3.22",
-	Host:             "newnewterminal.onrender.com",
+	Version:          "3.25",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "I HOPE THAT IS LAST TIME I WORK WITH THIS SHIT",
+	Title:            "Terminal Backend",
 	Description:      "This is a sample server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

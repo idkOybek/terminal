@@ -184,7 +184,7 @@ definitions:
       username:
         type: string
     type: object
-host: 185.100.54.94:8080
+host: newnewterminal.onrender.com
 info:
   contact:
     email: support@swagger.io

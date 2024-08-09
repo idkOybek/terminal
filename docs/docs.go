@@ -1193,7 +1193,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "3.25",
-	Host:             "localhost:8080",
+	Host:             "txkm-vipos.uz",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Terminal Backend",

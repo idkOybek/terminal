@@ -1,5 +1,3 @@
-// internal/handler/export_handler.go
-
 package handler
 
 import (
@@ -10,8 +8,8 @@ import (
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/service"
-	"github.com/idkOybek/newNewTerminal/pkg/csv"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
+	"github.com/idkOybek/newNewTerminal/pkg/xlsx"
 )
 
 type ExportHandler struct {
@@ -27,17 +25,17 @@ func NewExportHandler(logger *logger.Logger, userService *service.UserService) *
 }
 
 // @Security Bearer
-// @Summary Export data to CSV
-// @Description Export given data to CSV format
+// @Summary Export data to XLSX
+// @Description Export given data to XLSX format
 // @Tags export
 // @Accept json
-// @Produce text/csv
+// @Produce application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 // @Param request body models.ExportRequest true "Export request"
-// @Success 200 {file} string "exported_data.csv"
+// @Success 200 {file} string "exported_data.xlsx"
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /export [post]
-func (h *ExportHandler) ExportCSV(w http.ResponseWriter, r *http.Request) {
+func (h *ExportHandler) ExportXLSX(w http.ResponseWriter, r *http.Request) {
 	var req models.ExportRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -50,7 +48,7 @@ func (h *ExportHandler) ExportCSV(w http.ResponseWriter, r *http.Request) {
 	if filename == "" {
 		filename = fmt.Sprintf("export_%s", time.Now().Format("2006-01-02_15-04-05"))
 	}
-	filename = filename + ".csv"
+	filename = filename + ".xlsx"
 
 	// Заменяем user_id на user_login и получаем логины пользователей
 	for _, item := range req.Objects {
@@ -63,15 +61,23 @@ func (h *ExportHandler) ExportCSV(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Устанавливаем заголовки для CSV файла
-	w.Header().Set("Content-Type", "text/csv")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
-
-	// Записываем данные в CSV
-	err = csv.WriteCSV(req.Objects, w)
+	// Создаем XLSX файл
+	xlsxFile, err := xlsx.WriteXLSX(req.Objects)
 	if err != nil {
-		h.logger.Error("Failed to write CSV", "error", err)
-		RespondWithError(w, http.StatusInternalServerError, "Failed to generate CSV")
+		h.logger.Error("Failed to create XLSX", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to generate XLSX")
+		return
+	}
+
+	// Устанавливаем заголовки для XLSX файла
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+
+	// Записываем XLSX файл в ответ
+	err = xlsxFile.Write(w)
+	if err != nil {
+		h.logger.Error("Failed to write XLSX to response", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to send XLSX")
 		return
 	}
 }

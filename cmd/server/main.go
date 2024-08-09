@@ -16,7 +16,6 @@ import (
 	"github.com/idkOybek/newNewTerminal/internal/handler"
 	customMiddleware "github.com/idkOybek/newNewTerminal/internal/middleware"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
-	_ "github.com/idkOybek/newNewTerminal/internal/repository/postgres"
 	"github.com/idkOybek/newNewTerminal/internal/service"
 	"github.com/idkOybek/newNewTerminal/pkg/database"
 	"github.com/idkOybek/newNewTerminal/pkg/logger"
@@ -110,7 +109,7 @@ func main() {
 			r.Mount("/users", userHandler.Routes())
 			r.Mount("/fiscal-modules", fiscalModuleHandler.Routes())
 			r.Mount("/terminals", terminalHandler.Routes())
-			r.Post("/export", exportHandler.ExportCSV)
+			r.Post("/export", exportHandler.ExportXLSX)
 		})
 	})
 

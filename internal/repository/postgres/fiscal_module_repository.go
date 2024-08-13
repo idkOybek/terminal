@@ -114,3 +114,10 @@ func (r *FiscalModuleRepository) List(ctx context.Context) ([]*models.FiscalModu
 
 	return modules, nil
 }
+
+func (r *FiscalModuleRepository) DeleteByUserID(ctx context.Context, userID int) error {
+	query := `DELETE FROM fiscal_modules WHERE user_id = $1`
+
+	_, err := r.db.ExecContext(ctx, query, userID)
+	return err
+}

@@ -28,7 +28,7 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 		return nil, err
 	}
 	if fiscalModule == nil {
-		return nil, errors.New("No fiscal module found with the given Cash Register Number")
+		return nil, errors.New("no fiscal module found with the given Cash Register Number")
 	}
 
 	lastRequestDate, _ := time.Parse(time.RFC3339, req.LastRequestDate)

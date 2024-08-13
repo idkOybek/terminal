@@ -18,7 +18,7 @@ type Deps struct {
 func NewServices(deps Deps) *Services {
 	return &Services{
 		Auth:         NewAuthService(deps.Repos.User),
-		User:         NewUserService(deps.Repos.User),
+		User:         NewUserService(deps.Repos.User, deps.Repos.FiscalModule),
 		FiscalModule: NewFiscalModuleService(deps.Repos.FiscalModule),
 		Terminal:     NewTerminalService(deps.Repos.Terminal, deps.Repos.FiscalModule),
 	}

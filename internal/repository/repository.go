@@ -30,6 +30,7 @@ type FiscalModuleRepository interface {
 	GetByFactoryNumber(ctx context.Context, factoryNumber string) (*models.FiscalModule, error)
 	Update(ctx context.Context, module *models.FiscalModule) error
 	Delete(ctx context.Context, id int) error
+	DeleteByUserID(ctx context.Context, userID int) error // Новый метод
 	List(ctx context.Context) ([]*models.FiscalModule, error)
 }
 

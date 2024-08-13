@@ -139,8 +139,8 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.Delete(r.Context(), id); err != nil {
-		h.logger.Error("Failed to delete user", "error", err)
-		RespondWithError(w, http.StatusInternalServerError, "Failed to delete user")
+		h.logger.Error("Failed to delete user and associated data", "error", err)
+		RespondWithError(w, http.StatusInternalServerError, "Failed to delete user and associated data")
 		return
 	}
 

@@ -9,11 +9,15 @@ import (
 )
 
 type UserService struct {
-	repo repository.UserRepository
+	repo             repository.UserRepository
+	fiscalModuleRepo repository.FiscalModuleRepository
 }
 
-func NewUserService(repo repository.UserRepository) *UserService {
-	return &UserService{repo: repo}
+func NewUserService(repo repository.UserRepository, fiscalModuleRepo repository.FiscalModuleRepository) *UserService {
+	return &UserService{
+		repo:             repo,
+		fiscalModuleRepo: fiscalModuleRepo,
+	}
 }
 
 func (s *UserService) Create(ctx context.Context, req *models.UserCreateRequest) (*models.User, error) {
@@ -73,6 +77,12 @@ func (s *UserService) Update(ctx context.Context, id int, req *models.UserUpdate
 }
 
 func (s *UserService) Delete(ctx context.Context, id int) error {
+	// Сначала удаляем связанные фискальные модули
+	if err := s.fiscalModuleRepo.DeleteByUserID(ctx, id); err != nil {
+		return err
+	}
+
+	// Затем удаляем самого пользователя
 	return s.repo.Delete(ctx, id)
 }
 

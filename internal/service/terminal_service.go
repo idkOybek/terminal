@@ -22,13 +22,12 @@ func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo rep
 }
 
 func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {
-
 	fiscalModule, err := s.fiscalModuleRepo.GetByFactoryNumber(ctx, req.CashRegisterNumber)
 	if err != nil {
 		return nil, err
 	}
 	if fiscalModule == nil {
-		return nil, errors.New("no fiscal module found with the given Cash Register Number")
+		return nil, errors.New("no fiscal module found with the given cash register number")
 	}
 
 	lastRequestDate, _ := time.Parse(time.RFC3339, req.LastRequestDate)
@@ -43,7 +42,7 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 		ModuleNumber:       req.ModuleNumber,
 		LastRequestDate:    lastRequestDate,
 		DatabaseUpdateDate: databaseUpdateDate,
-		Status:             req.Status,
+		IsActive:           req.IsActive,
 		UserID:             req.UserID,
 		FreeRecordBalance:  req.FreeRecordBalance,
 	}
@@ -77,7 +76,7 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	terminal.ModuleNumber = req.ModuleNumber
 	terminal.LastRequestDate = lastRequestDate
 	terminal.DatabaseUpdateDate = databaseUpdateDate
-	terminal.Status = req.Status
+	terminal.IsActive = req.IsActive
 	terminal.UserID = req.UserID
 	terminal.FreeRecordBalance = req.FreeRecordBalance
 

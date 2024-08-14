@@ -12,7 +12,7 @@ type Terminal struct {
 	ModuleNumber       string    `json:"module_number" db:"module_number"`
 	LastRequestDate    time.Time `json:"last_request_date" db:"last_request_date"`
 	DatabaseUpdateDate time.Time `json:"database_update_date" db:"database_update_date"`
-	Status             string    `json:"status" db:"status"`
+	IsActive           bool      `json:"is_active" db:"is_active"`
 	UserID             int       `json:"user_id" db:"user_id"`
 	FreeRecordBalance  int       `json:"free_record_balance" db:"free_record_balance"`
 	CreatedAt          time.Time `json:"created_at" db:"created_at"`
@@ -28,7 +28,7 @@ type TerminalCreateRequest struct {
 	ModuleNumber       string `json:"module_number"`
 	LastRequestDate    string `json:"last_request_date"`
 	DatabaseUpdateDate string `json:"database_update_date"`
-	Status             string `json:"status"`
+	IsActive           bool   `json:"is_active"` 
 	UserID             int    `json:"user_id"`
 	FreeRecordBalance  int    `json:"free_record_balance"`
 }
@@ -42,7 +42,7 @@ type TerminalUpdateRequest struct {
 	ModuleNumber       string `json:"module_number"`
 	LastRequestDate    string `json:"last_request_date"`
 	DatabaseUpdateDate string `json:"database_update_date"`
-	Status             string `json:"status"`
+	IsActive           bool   `json:"is_active"`
 	UserID             int    `json:"user_id"`
 	FreeRecordBalance  int    `json:"free_record_balance"`
 }

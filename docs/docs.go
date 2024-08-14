@@ -996,13 +996,13 @@ const docTemplate = `{
                 "inn": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "last_request_date": {
                     "type": "string"
                 },
                 "module_number": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 },
                 "updated_at": {
@@ -1037,13 +1037,13 @@ const docTemplate = `{
                 "inn": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "last_request_date": {
                     "type": "string"
                 },
                 "module_number": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1075,13 +1075,13 @@ const docTemplate = `{
                 "inn": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "last_request_date": {
                     "type": "string"
                 },
                 "module_number": {
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 },
                 "user_id": {

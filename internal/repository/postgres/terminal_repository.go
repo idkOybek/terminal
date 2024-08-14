@@ -63,7 +63,7 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args := []interface{}{}
 	argId := 1
 
-	// Динамически формируем запрос только для измененных полей
+	// Динамически формируем запрос для всех полей
 	if terminal.AssemblyNumber != "" {
 		query += fmt.Sprintf("assembly_number = $%d, ", argId)
 		args = append(args, terminal.AssemblyNumber)
@@ -74,7 +74,48 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 		args = append(args, terminal.INN)
 		argId++
 	}
-	// ... добавьте аналогичные проверки для остальных полей ...
+	if terminal.CompanyName != "" {
+		query += fmt.Sprintf("company_name = $%d, ", argId)
+		args = append(args, terminal.CompanyName)
+		argId++
+	}
+	if terminal.Address != "" {
+		query += fmt.Sprintf("address = $%d, ", argId)
+		args = append(args, terminal.Address)
+		argId++
+	}
+	if terminal.CashRegisterNumber != "" {
+		query += fmt.Sprintf("cash_register_number = $%d, ", argId)
+		args = append(args, terminal.CashRegisterNumber)
+		argId++
+	}
+	if terminal.ModuleNumber != "" {
+		query += fmt.Sprintf("module_number = $%d, ", argId)
+		args = append(args, terminal.ModuleNumber)
+		argId++
+	}
+
+	// Добавляем обновление для LastRequestDate и DatabaseUpdateDate
+	query += fmt.Sprintf("last_request_date = $%d, ", argId)
+	args = append(args, terminal.LastRequestDate)
+	argId++
+
+	query += fmt.Sprintf("database_update_date = $%d, ", argId)
+	args = append(args, terminal.DatabaseUpdateDate)
+	argId++
+
+	// Всегда обновляем is_active
+	query += fmt.Sprintf("is_active = $%d, ", argId)
+	args = append(args, terminal.IsActive)
+	argId++
+
+	query += fmt.Sprintf("user_id = $%d, ", argId)
+	args = append(args, terminal.UserID)
+	argId++
+
+	query += fmt.Sprintf("free_record_balance = $%d, ", argId)
+	args = append(args, terminal.FreeRecordBalance)
+	argId++
 
 	// Всегда обновляем поле updated_at
 	query += fmt.Sprintf("updated_at = $%d ", argId)

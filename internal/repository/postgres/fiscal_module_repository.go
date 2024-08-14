@@ -3,6 +3,9 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
+	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 )
@@ -67,15 +70,29 @@ func (r *FiscalModuleRepository) GetByID(ctx context.Context, id int) (*models.F
 }
 
 func (r *FiscalModuleRepository) Update(ctx context.Context, module *models.FiscalModule) error {
-	query := `
-        UPDATE fiscal_modules
-        SET fiscal_number = $1, factory_number = $2, user_id = $3, updated_at = NOW()
-        WHERE id = $4`
+	query := "UPDATE fiscal_modules SET "
+	args := []interface{}{}
+	argId := 1
 
-	_, err := r.db.ExecContext(ctx, query,
-		module.FiscalNumber, module.FactoryNumber, module.UserID, module.ID,
-	)
+	if module.FiscalNumber != "" {
+		query += fmt.Sprintf("fiscal_number = $%d, ", argId)
+		args = append(args, module.FiscalNumber)
+		argId++
+	}
+	if module.FactoryNumber != "" {
+		query += fmt.Sprintf("factory_number = $%d, ", argId)
+		args = append(args, module.FactoryNumber)
+		argId++
+	}
+	query += fmt.Sprintf("user_id = $%d, updated_at = $%d ", argId, argId+1)
+	args = append(args, module.UserID, time.Now())
+	argId += 2
 
+	query = strings.TrimSuffix(query, ", ")
+	query += fmt.Sprintf("WHERE id = $%d", argId)
+	args = append(args, module.ID)
+
+	_, err := r.db.ExecContext(ctx, query, args...)
 	return err
 }
 

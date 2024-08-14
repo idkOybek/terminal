@@ -18,9 +18,9 @@ type FiscalModuleCreateRequest struct {
 }
 
 type FiscalModuleUpdateRequest struct {
-	FiscalNumber  string `json:"fiscal_number"`
-	FactoryNumber string `json:"factory_number"`
-	UserID        int    `json:"user_id"`
+	FiscalNumber  *string `json:"fiscal_number,omitempty"`
+	FactoryNumber *string `json:"factory_number,omitempty"`
+	UserID        *int    `json:"user_id,omitempty"`
 }
 
 type FiscalModuleResponse struct {

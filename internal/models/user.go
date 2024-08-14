@@ -22,11 +22,11 @@ type UserCreateRequest struct {
 }
 
 type UserUpdateRequest struct {
-	INN      string `json:"inn"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	IsActive bool   `json:"is_active"`
-	IsAdmin  bool   `json:"is_admin"`
+	INN      *string `json:"inn,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Password *string `json:"password,omitempty"`
+	IsActive *bool   `json:"is_active,omitempty"`
+	IsAdmin  *bool   `json:"is_admin,omitempty"`
 }
 
 type UserLoginRequest struct {

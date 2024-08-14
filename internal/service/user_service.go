@@ -52,21 +52,25 @@ func (s *UserService) Update(ctx context.Context, id int, req *models.UserUpdate
 		return nil, err
 	}
 
-	if req.INN != "" {
-		user.INN = req.INN
+	if req.INN != nil {
+		user.INN = *req.INN
 	}
-	if req.Username != "" {
-		user.Username = req.Username
+	if req.Username != nil {
+		user.Username = *req.Username
 	}
-	if req.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if req.Password != nil {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return nil, err
 		}
 		user.Password = string(hashedPassword)
 	}
-	user.IsActive = req.IsActive
-	user.IsAdmin = req.IsAdmin
+	if req.IsActive != nil {
+		user.IsActive = *req.IsActive
+	}
+	if req.IsAdmin != nil {
+		user.IsAdmin = *req.IsAdmin
+	}
 
 	err = s.repo.Update(ctx, user)
 	if err != nil {

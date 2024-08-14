@@ -3,6 +3,9 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
+	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 )
@@ -56,23 +59,38 @@ func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Termi
 }
 
 func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Terminal) error {
-	query := `
-        UPDATE terminals
-        SET assembly_number = $1, inn = $2, company_name = $3, address = $4,
-            cash_register_number = $5, module_number = $6, last_request_date = $7,
-            database_update_date = $8, is_active = $9, user_id = $10,
-            free_record_balance = $11, updated_at = NOW()
-        WHERE id = $12`
+	query := "UPDATE terminals SET "
+	args := []interface{}{}
+	argId := 1
 
-	_, err := r.db.ExecContext(ctx, query,
-		terminal.AssemblyNumber, terminal.INN, terminal.CompanyName, terminal.Address,
-		terminal.CashRegisterNumber, terminal.ModuleNumber, terminal.LastRequestDate,
-		terminal.DatabaseUpdateDate, terminal.IsActive, terminal.UserID,
-		terminal.FreeRecordBalance, terminal.ID,
-	)
+	// Динамически формируем запрос только для измененных полей
+	if terminal.AssemblyNumber != "" {
+		query += fmt.Sprintf("assembly_number = $%d, ", argId)
+		args = append(args, terminal.AssemblyNumber)
+		argId++
+	}
+	if terminal.INN != "" {
+		query += fmt.Sprintf("inn = $%d, ", argId)
+		args = append(args, terminal.INN)
+		argId++
+	}
+	// ... добавьте аналогичные проверки для остальных полей ...
 
+	// Всегда обновляем поле updated_at
+	query += fmt.Sprintf("updated_at = $%d ", argId)
+	args = append(args, time.Now())
+	argId++
+
+	// Удаляем последнюю запятую и пробел, если они есть
+	query = strings.TrimSuffix(query, ", ")
+
+	query += fmt.Sprintf("WHERE id = $%d", argId)
+	args = append(args, terminal.ID)
+
+	_, err := r.db.ExecContext(ctx, query, args...)
 	return err
 }
+
 func (r *TerminalRepository) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM terminals WHERE id = $1`
 

@@ -65,20 +65,46 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 		return nil, err
 	}
 
-	lastRequestDate, _ := time.Parse(time.RFC3339, req.LastRequestDate)
-	databaseUpdateDate, _ := time.Parse(time.RFC3339, req.DatabaseUpdateDate)
-
-	terminal.AssemblyNumber = req.AssemblyNumber
-	terminal.INN = req.INN
-	terminal.CompanyName = req.CompanyName
-	terminal.Address = req.Address
-	terminal.CashRegisterNumber = req.CashRegisterNumber
-	terminal.ModuleNumber = req.ModuleNumber
-	terminal.LastRequestDate = lastRequestDate
-	terminal.DatabaseUpdateDate = databaseUpdateDate
-	terminal.IsActive = req.IsActive
-	terminal.UserID = req.UserID
-	terminal.FreeRecordBalance = req.FreeRecordBalance
+	// Обновляем только те поля, которые присутствуют в запросе
+	if req.AssemblyNumber != nil {
+		terminal.AssemblyNumber = *req.AssemblyNumber
+	}
+	if req.INN != nil {
+		terminal.INN = *req.INN
+	}
+	if req.CompanyName != nil {
+		terminal.CompanyName = *req.CompanyName
+	}
+	if req.Address != nil {
+		terminal.Address = *req.Address
+	}
+	if req.CashRegisterNumber != nil {
+		terminal.CashRegisterNumber = *req.CashRegisterNumber
+	}
+	if req.ModuleNumber != nil {
+		terminal.ModuleNumber = *req.ModuleNumber
+	}
+	if req.LastRequestDate != nil {
+		lastRequestDate, err := time.Parse(time.RFC3339, *req.LastRequestDate)
+		if err == nil {
+			terminal.LastRequestDate = lastRequestDate
+		}
+	}
+	if req.DatabaseUpdateDate != nil {
+		databaseUpdateDate, err := time.Parse(time.RFC3339, *req.DatabaseUpdateDate)
+		if err == nil {
+			terminal.DatabaseUpdateDate = databaseUpdateDate
+		}
+	}
+	if req.IsActive != nil {
+		terminal.IsActive = *req.IsActive
+	}
+	if req.UserID != nil {
+		terminal.UserID = *req.UserID
+	}
+	if req.FreeRecordBalance != nil {
+		terminal.FreeRecordBalance = *req.FreeRecordBalance
+	}
 
 	err = s.repo.Update(ctx, terminal)
 	if err != nil {

@@ -49,27 +49,28 @@ func (s *FiscalModuleService) GetByID(ctx context.Context, id int) (*models.Fisc
 	}, nil
 }
 
-func (s *FiscalModuleService) Update(ctx context.Context, id int, req *models.FiscalModuleUpdateRequest) (*models.FiscalModuleResponse, error) {
+func (s *FiscalModuleService) Update(ctx context.Context, id int, req *models.FiscalModuleUpdateRequest) (*models.FiscalModule, error) {
 	module, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	module.FiscalNumber = req.FiscalNumber
-	module.FactoryNumber = req.FactoryNumber
-	module.UserID = req.UserID
+	if req.FiscalNumber != nil {
+		module.FiscalNumber = *req.FiscalNumber
+	}
+	if req.FactoryNumber != nil {
+		module.FactoryNumber = *req.FactoryNumber
+	}
+	if req.UserID != nil {
+		module.UserID = *req.UserID
+	}
 
 	err = s.repo.Update(ctx, module)
 	if err != nil {
 		return nil, err
 	}
 
-	return &models.FiscalModuleResponse{
-		ID:            module.ID,
-		FiscalNumber:  module.FiscalNumber,
-		FactoryNumber: module.FactoryNumber,
-		UserID:        module.UserID,
-	}, nil
+	return module, nil
 }
 
 func (s *FiscalModuleService) Delete(ctx context.Context, id int) error {

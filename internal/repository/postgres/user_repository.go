@@ -3,6 +3,9 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
+	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 )
@@ -67,15 +70,34 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*m
 }
 
 func (r *UserRepository) Update(ctx context.Context, user *models.User) error {
-	query := `
-        UPDATE users
-        SET inn = $1, username = $2, password = $3, is_active = $4, is_admin = $5, updated_at = NOW()
-        WHERE id = $6`
+	query := "UPDATE users SET "
+	args := []interface{}{}
+	argId := 1
 
-	_, err := r.db.ExecContext(ctx, query,
-		user.INN, user.Username, user.Password, user.IsActive, user.IsAdmin, user.ID,
-	)
+	if user.INN != "" {
+		query += fmt.Sprintf("inn = $%d, ", argId)
+		args = append(args, user.INN)
+		argId++
+	}
+	if user.Username != "" {
+		query += fmt.Sprintf("username = $%d, ", argId)
+		args = append(args, user.Username)
+		argId++
+	}
+	if user.Password != "" {
+		query += fmt.Sprintf("password = $%d, ", argId)
+		args = append(args, user.Password)
+		argId++
+	}
+	query += fmt.Sprintf("is_active = $%d, is_admin = $%d, updated_at = $%d ", argId, argId+1, argId+2)
+	args = append(args, user.IsActive, user.IsAdmin, time.Now())
+	argId += 3
 
+	query = strings.TrimSuffix(query, ", ")
+	query += fmt.Sprintf("WHERE id = $%d", argId)
+	args = append(args, user.ID)
+
+	_, err := r.db.ExecContext(ctx, query, args...)
 	return err
 }
 

@@ -28,21 +28,21 @@ type TerminalCreateRequest struct {
 	ModuleNumber       string `json:"module_number"`
 	LastRequestDate    string `json:"last_request_date"`
 	DatabaseUpdateDate string `json:"database_update_date"`
-	IsActive           bool   `json:"is_active"` 
+	IsActive           bool   `json:"is_active"`
 	UserID             int    `json:"user_id"`
 	FreeRecordBalance  int    `json:"free_record_balance"`
 }
 
 type TerminalUpdateRequest struct {
-	AssemblyNumber     string `json:"assembly_number"`
-	INN                string `json:"inn"`
-	CompanyName        string `json:"company_name"`
-	Address            string `json:"address"`
-	CashRegisterNumber string `json:"cash_register_number"`
-	ModuleNumber       string `json:"module_number"`
-	LastRequestDate    string `json:"last_request_date"`
-	DatabaseUpdateDate string `json:"database_update_date"`
-	IsActive           bool   `json:"is_active"`
-	UserID             int    `json:"user_id"`
-	FreeRecordBalance  int    `json:"free_record_balance"`
+	AssemblyNumber     *string `json:"assembly_number,omitempty"`
+	INN                *string `json:"inn,omitempty"`
+	CompanyName        *string `json:"company_name,omitempty"`
+	Address            *string `json:"address,omitempty"`
+	CashRegisterNumber *string `json:"cash_register_number,omitempty"`
+	ModuleNumber       *string `json:"module_number,omitempty"`
+	LastRequestDate    *string `json:"last_request_date,omitempty"`
+	DatabaseUpdateDate *string `json:"database_update_date,omitempty"`
+	IsActive           *bool   `json:"is_active,omitempty"`
+	UserID             *int    `json:"user_id,omitempty"`
+	FreeRecordBalance  *int    `json:"free_record_balance,omitempty"`
 }

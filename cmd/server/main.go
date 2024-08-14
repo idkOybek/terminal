@@ -38,7 +38,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host 185.100.54.94:8080
+// @host txkm-vipos.uz
 // @BasePath /api
 // @securityDefinitions.apikey Bearer
 // @in header

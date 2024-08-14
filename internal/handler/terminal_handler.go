@@ -23,6 +23,7 @@ func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger)
 	}
 }
 
+// @Security Bearer
 // @Summary Create a new terminal
 // @Description Create a new terminal with the given input
 // @Tags terminals
@@ -168,6 +169,7 @@ func (h *TerminalHandler) List(w http.ResponseWriter, r *http.Request) {
 
 func (h *TerminalHandler) Routes() chi.Router {
 	r := chi.NewRouter()
+	r.Post("/", h.Create)
 	r.Get("/{id}", h.GetByID)
 	r.Put("/{id}", h.Update)
 	r.Delete("/{id}", h.Delete)

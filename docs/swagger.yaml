@@ -259,8 +259,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
-      security:
-      - Bearer: []
       summary: Register a new user
       tags:
       - auth
@@ -498,6 +496,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Create a new terminal
       tags:
       - terminals

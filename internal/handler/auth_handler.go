@@ -22,7 +22,6 @@ func NewAuthHandler(service *service.AuthService, logger *logger.Logger) *AuthHa
 	}
 }
 
-// @Security Bearer
 // @Summary Register a new user
 // @Description Register a new user with the given input
 // @Tags auth

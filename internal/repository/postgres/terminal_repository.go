@@ -18,6 +18,24 @@ func NewTerminalRepository(db *sql.DB) *TerminalRepository {
 	return &TerminalRepository{db: db}
 }
 
+func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error) {
+	query := `
+		SELECT user_id 
+		FROM user_terminal_associations 
+		WHERE cash_register_number = $1`
+
+	var userID int
+	err := r.db.QueryRowContext(ctx, query, cashRegisterNumber).Scan(&userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, fmt.Errorf("no user associated with cash register number %s", cashRegisterNumber)
+		}
+		return 0, err
+	}
+
+	return userID, nil
+}
+
 func (r *TerminalRepository) Create(ctx context.Context, terminal *models.Terminal) error {
 	query := `
         INSERT INTO terminals (assembly_number, inn, company_name, address, cash_register_number, 

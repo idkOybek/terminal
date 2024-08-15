@@ -28,8 +28,6 @@ type TerminalCreateRequest struct {
 	ModuleNumber       string `json:"module_number"`
 	LastRequestDate    string `json:"last_request_date"`
 	DatabaseUpdateDate string `json:"database_update_date"`
-	IsActive           bool   `json:"is_active"`
-	UserID             int    `json:"user_id"`
 	FreeRecordBalance  int    `json:"free_record_balance"`
 }
 

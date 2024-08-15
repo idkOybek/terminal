@@ -30,6 +30,12 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 		return nil, errors.New("no fiscal module found with the given cash register number")
 	}
 
+	// Определяем user_id на основе CashRegisterNumber
+	userID, err := s.repo.GetUserIDByCashRegisterNumber(ctx, req.CashRegisterNumber)
+	if err != nil {
+		return nil, errors.New("failed to determine user for this terminal")
+	}
+
 	lastRequestDate, _ := time.Parse(time.RFC3339, req.LastRequestDate)
 	databaseUpdateDate, _ := time.Parse(time.RFC3339, req.DatabaseUpdateDate)
 
@@ -42,8 +48,8 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 		ModuleNumber:       req.ModuleNumber,
 		LastRequestDate:    lastRequestDate,
 		DatabaseUpdateDate: databaseUpdateDate,
-		IsActive:           req.IsActive,
-		UserID:             req.UserID,
+		IsActive:           true,
+		UserID:             userID,
 		FreeRecordBalance:  req.FreeRecordBalance,
 	}
 
@@ -54,7 +60,6 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 
 	return terminal, nil
 }
-
 func (s *TerminalService) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
 	return s.repo.GetByID(ctx, id)
 }

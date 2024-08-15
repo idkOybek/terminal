@@ -30,7 +30,7 @@ type FiscalModuleRepository interface {
 	GetByFactoryNumber(ctx context.Context, factoryNumber string) (*models.FiscalModule, error)
 	Update(ctx context.Context, module *models.FiscalModule) error
 	Delete(ctx context.Context, id int) error
-	DeleteByUserID(ctx context.Context, userID int) error // Новый метод
+	DeleteByUserID(ctx context.Context, userID int) error
 	List(ctx context.Context) ([]*models.FiscalModule, error)
 }
 
@@ -40,6 +40,7 @@ type TerminalRepository interface {
 	Update(ctx context.Context, terminal *models.Terminal) error
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]*models.Terminal, error)
+	GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error)
 }
 
 func NewRepositories(db *sql.DB) *Repositories {

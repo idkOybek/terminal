@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS fiscal_modules (
     fiscal_number VARCHAR(255) UNIQUE NOT NULL,
     factory_number VARCHAR(255) UNIQUE NOT NULL,
     user_id INTEGER REFERENCES users(id),
+    is_active BOOLEAN NOT NULL DEFAULT false, -- Добавлено новое поле
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
@@ -10,14 +11,16 @@ import (
 )
 
 type TerminalService struct {
-	repo             repository.TerminalRepository
-	fiscalModuleRepo repository.FiscalModuleRepository
+	repo                repository.TerminalRepository
+	fiscalModuleRepo    repository.FiscalModuleRepository
+	fiscalModuleService *FiscalModuleService // Добавляем сервис фискального модуля
 }
 
-func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository) *TerminalService {
+func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService) *TerminalService {
 	return &TerminalService{
-		repo:             repo,
-		fiscalModuleRepo: fiscalModuleRepo,
+		repo:                repo,
+		fiscalModuleRepo:    fiscalModuleRepo,
+		fiscalModuleService: fiscalModuleService,
 	}
 }
 
@@ -29,8 +32,6 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 	if fiscalModule == nil {
 		return nil, errors.New("no fiscal module found with the given cash register number")
 	}
-
-	// Определяем user_id на основе CashRegisterNumber
 	userID, err := s.repo.GetUserIDByCashRegisterNumber(ctx, req.CashRegisterNumber)
 	if err != nil {
 		return nil, errors.New("failed to determine user for this terminal")
@@ -58,8 +59,15 @@ func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreate
 		return nil, err
 	}
 
+	// Активируем связанный фискальный модуль
+	err = s.fiscalModuleService.Activate(ctx, fiscalModule.ID)
+	if err != nil {
+		return nil, errors.New(fmt.Sprint("failed to activate fiscal module: %w", err))
+	}
+
 	return terminal, nil
 }
+
 func (s *TerminalService) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
 	return s.repo.GetByID(ctx, id)
 }

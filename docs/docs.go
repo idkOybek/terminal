@@ -44,7 +44,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserLoginRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserLoginRequest"
                         }
                     }
                 ],
@@ -52,25 +52,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserLoginResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserLoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -96,7 +96,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserCreateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest"
                         }
                     }
                 ],
@@ -104,19 +104,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -147,7 +147,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ExportRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ExportRequest"
                         }
                     }
                 ],
@@ -161,13 +161,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -197,14 +197,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.FiscalModuleResponse"
+                                "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -233,7 +233,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModuleCreateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleCreateRequest"
                         }
                     }
                 ],
@@ -241,19 +241,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModuleResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -290,19 +290,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModuleResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -338,7 +338,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModuleUpdateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleUpdateRequest"
                         }
                     }
                 ],
@@ -346,25 +346,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.FiscalModuleResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -402,13 +402,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -438,14 +438,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Terminal"
+                                "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -474,7 +474,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.TerminalCreateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.TerminalCreateRequest"
                         }
                     }
                 ],
@@ -482,19 +482,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Terminal"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -531,19 +531,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Terminal"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -579,7 +579,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.TerminalUpdateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.TerminalUpdateRequest"
                         }
                     }
                 ],
@@ -587,25 +587,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Terminal"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -643,13 +643,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -679,14 +679,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.User"
+                                "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -715,7 +715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserCreateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest"
                         }
                     }
                 ],
@@ -723,19 +723,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -772,19 +772,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -820,7 +820,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserUpdateRequest"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserUpdateRequest"
                         }
                     }
                 ],
@@ -828,25 +828,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -884,13 +884,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
+                            "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse"
                         }
                     }
                 }
@@ -898,7 +898,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.ErrorResponse": {
+        "github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -906,7 +906,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ExportRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.ExportRequest": {
             "type": "object",
             "properties": {
                 "filename": {
@@ -921,7 +921,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.FiscalModuleCreateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleCreateRequest": {
             "type": "object",
             "properties": {
                 "factory_number": {
@@ -930,12 +930,15 @@ const docTemplate = `{
                 "fiscal_number": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "models.FiscalModuleResponse": {
+        "github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse": {
             "type": "object",
             "properties": {
                 "factory_number": {
@@ -947,12 +950,15 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "models.FiscalModuleUpdateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleUpdateRequest": {
             "type": "object",
             "properties": {
                 "factory_number": {
@@ -961,12 +967,15 @@ const docTemplate = `{
                 "fiscal_number": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "models.Terminal": {
+        "github_com_idkOybek_newNewTerminal_internal_models.Terminal": {
             "type": "object",
             "properties": {
                 "address": {
@@ -1013,7 +1022,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TerminalCreateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.TerminalCreateRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -1045,7 +1054,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TerminalUpdateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.TerminalUpdateRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -1083,9 +1092,12 @@ const docTemplate = `{
                 }
             }
         },
-        "models.User": {
+        "github_com_idkOybek_newNewTerminal_internal_models.User": {
             "type": "object",
             "properties": {
+                "company_name": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -1112,9 +1124,12 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserCreateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest": {
             "type": "object",
             "properties": {
+                "company_name": {
+                    "type": "string"
+                },
                 "inn": {
                     "type": "string"
                 },
@@ -1132,7 +1147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserLoginRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.UserLoginRequest": {
             "type": "object",
             "properties": {
                 "password": {
@@ -1143,20 +1158,23 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserLoginResponse": {
+        "github_com_idkOybek_newNewTerminal_internal_models.UserLoginResponse": {
             "type": "object",
             "properties": {
                 "token": {
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/models.User"
+                    "$ref": "#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User"
                 }
             }
         },
-        "models.UserUpdateRequest": {
+        "github_com_idkOybek_newNewTerminal_internal_models.UserUpdateRequest": {
             "type": "object",
             "properties": {
+                "company_name": {
+                    "type": "string"
+                },
                 "inn": {
                     "type": "string"
                 },

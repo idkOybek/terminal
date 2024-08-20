@@ -20,6 +20,7 @@ func (s *FiscalModuleService) Create(ctx context.Context, req *models.FiscalModu
 		FiscalNumber:  req.FiscalNumber,
 		FactoryNumber: req.FactoryNumber,
 		UserID:        req.UserID,
+		IsActive:      req.IsActive, // Новое поле
 	}
 
 	err := s.repo.Create(ctx, module)
@@ -32,6 +33,7 @@ func (s *FiscalModuleService) Create(ctx context.Context, req *models.FiscalModu
 		FiscalNumber:  module.FiscalNumber,
 		FactoryNumber: module.FactoryNumber,
 		UserID:        module.UserID,
+		IsActive:      module.IsActive, // Новое поле
 	}, nil
 }
 
@@ -64,6 +66,9 @@ func (s *FiscalModuleService) Update(ctx context.Context, id int, req *models.Fi
 	if req.UserID != nil {
 		module.UserID = *req.UserID
 	}
+	if req.IsActive != nil {
+		module.IsActive = *req.IsActive
+	}
 
 	err = s.repo.Update(ctx, module)
 	if err != nil {
@@ -94,4 +99,14 @@ func (s *FiscalModuleService) List(ctx context.Context) ([]*models.FiscalModuleR
 	}
 
 	return response, nil
+}
+
+func (s *FiscalModuleService) Activate(ctx context.Context, id int) error {
+	module, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	module.IsActive = true
+	return s.repo.Update(ctx, module)
 }

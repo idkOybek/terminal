@@ -27,11 +27,12 @@ func (s *UserService) Create(ctx context.Context, req *models.UserCreateRequest)
 	}
 
 	user := &models.User{
-		INN:      req.INN,
-		Username: req.Username,
-		Password: string(hashedPassword),
-		IsActive: req.IsActive,
-		IsAdmin:  req.IsAdmin,
+		INN:         req.INN,
+		Username:    req.Username,
+		Password:    string(hashedPassword),
+		CompanyName: req.CompanyName, // Новое поле
+		IsActive:    req.IsActive,
+		IsAdmin:     req.IsAdmin,
 	}
 
 	err = s.repo.Create(ctx, user)
@@ -64,6 +65,9 @@ func (s *UserService) Update(ctx context.Context, id int, req *models.UserUpdate
 			return nil, err
 		}
 		user.Password = string(hashedPassword)
+	}
+	if req.CompanyName != nil {
+		user.CompanyName = *req.CompanyName
 	}
 	if req.IsActive != nil {
 		user.IsActive = *req.IsActive

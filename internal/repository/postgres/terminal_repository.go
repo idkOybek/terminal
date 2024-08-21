@@ -22,7 +22,7 @@ func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, 
 	query := `
 		SELECT user_id 
 		FROM fiscal_modules
-		WHERE cash_register_number = $1`
+		WHERE factory_number = $1`
 
 	var userID int
 	err := r.db.QueryRowContext(ctx, query, cashRegisterNumber).Scan(&userID)

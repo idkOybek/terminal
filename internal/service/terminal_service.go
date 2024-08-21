@@ -21,19 +21,23 @@ type TerminalService struct {
 
 func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService, logger *logger.Logger) *TerminalService {
 	if logger == nil {
-		log.Println("Warning: logger is nil in NewTerminalService")
-	} else {
-		logger.Info("Creating new TerminalService")
+		log.Println("Error: logger is nil in NewTerminalService")
+		return nil
 	}
 
-	if repo == nil && logger != nil {
+	logger.Info("Creating new TerminalService")
+
+	if repo == nil {
 		logger.Error("Terminal repository is nil")
+		return nil
 	}
-	if fiscalModuleRepo == nil && logger != nil {
+	if fiscalModuleRepo == nil {
 		logger.Error("Fiscal module repository is nil")
+		return nil
 	}
-	if fiscalModuleService == nil && logger != nil {
+	if fiscalModuleService == nil {
 		logger.Error("Fiscal module service is nil")
+		return nil
 	}
 
 	return &TerminalService{

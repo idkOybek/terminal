@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -46,7 +47,9 @@ import (
 func main() {
 	// Initialize logger
 	logger := logger.NewLogger()
-
+	if logger == nil {
+		log.Fatal("Failed to create logger")
+	}
 	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {

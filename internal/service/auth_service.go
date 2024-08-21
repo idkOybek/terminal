@@ -27,11 +27,12 @@ func (s *AuthService) Register(ctx context.Context, req *models.UserCreateReques
 	}
 
 	user := &models.User{
-		Username: req.Username,
-		Password: string(hashedPassword),
-		INN:      req.INN,
-		IsActive: req.IsActive,
-		IsAdmin:  req.IsAdmin,
+		INN:         req.INN,
+		Username:    req.Username,
+		Password:    string(hashedPassword),
+		CompanyName: req.CompanyName, // Новое поле
+		IsActive:    req.IsActive,
+		IsAdmin:     req.IsAdmin,
 	}
 
 	// Сохраняем пользователя в базу данных

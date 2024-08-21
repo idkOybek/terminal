@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
@@ -19,15 +20,47 @@ type TerminalService struct {
 }
 
 func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService, logger *logger.Logger) *TerminalService {
-    return &TerminalService{
-        repo:                repo,
-        fiscalModuleRepo:    fiscalModuleRepo,
-        fiscalModuleService: fiscalModuleService,
-        logger:              logger,
-    }
+	if logger == nil {
+		log.Println("Warning: logger is nil in NewTerminalService")
+	} else {
+		logger.Info("Creating new TerminalService")
+	}
+
+	if repo == nil && logger != nil {
+		logger.Error("Terminal repository is nil")
+	}
+	if fiscalModuleRepo == nil && logger != nil {
+		logger.Error("Fiscal module repository is nil")
+	}
+	if fiscalModuleService == nil && logger != nil {
+		logger.Error("Fiscal module service is nil")
+	}
+
+	return &TerminalService{
+		repo:                repo,
+		fiscalModuleRepo:    fiscalModuleRepo,
+		fiscalModuleService: fiscalModuleService,
+		logger:              logger,
+	}
 }
 
 func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {
+	if s.logger == nil {
+		return nil, errors.New("logger is not initialized")
+	}
+	if s.fiscalModuleRepo == nil {
+		s.logger.Error("Fiscal module repository is not initialized")
+		return nil, errors.New("fiscal module repository is not initialized")
+	}
+	if s.repo == nil {
+		s.logger.Error("Terminal repository is not initialized")
+		return nil, errors.New("terminal repository is not initialized")
+	}
+	if s.fiscalModuleService == nil {
+		s.logger.Error("Fiscal module service is not initialized")
+		return nil, errors.New("fiscal module service is not initialized")
+	}
+
 	s.logger.Info("Starting terminal creation", "cash_register_number", req.CashRegisterNumber)
 
 	fiscalModule, err := s.fiscalModuleRepo.GetByFactoryNumber(ctx, req.CashRegisterNumber)

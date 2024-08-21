@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -17,6 +18,14 @@ type TerminalHandler struct {
 }
 
 func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger) *TerminalHandler {
+	if service == nil {
+		log.Println("Error: TerminalService is nil in NewTerminalHandler")
+		return nil
+	}
+	if logger == nil {
+		log.Println("Warning: logger is nil in NewTerminalHandler")
+	}
+
 	return &TerminalHandler{
 		service: service,
 		logger:  logger,

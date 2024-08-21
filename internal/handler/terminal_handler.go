@@ -49,6 +49,8 @@ func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.logger.Info("Terminal created successfully", "id", terminal.ID)
+
 	RespondWithJSON(w, http.StatusCreated, terminal)
 }
 

@@ -81,8 +81,6 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	if err != nil {
 		return nil, err
 	}
-
-	// Обновляем только те поля, которые присутствуют в запросе
 	if req.AssemblyNumber != nil {
 		terminal.AssemblyNumber = *req.AssemblyNumber
 	}

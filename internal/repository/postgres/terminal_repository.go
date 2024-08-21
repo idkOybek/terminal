@@ -28,7 +28,7 @@ func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, 
 	err := r.db.QueryRowContext(ctx, query, cashRegisterNumber).Scan(&userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return 0, fmt.Errorf("no user associated with cash register number %s", cashRegisterNumber)
+			return 0, fmt.Errorf("no user associated with factory number %s", cashRegisterNumber)
 		}
 		return 0, err
 	}

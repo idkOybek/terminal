@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
@@ -104,9 +105,16 @@ func (s *FiscalModuleService) List(ctx context.Context) ([]*models.FiscalModuleR
 func (s *FiscalModuleService) Activate(ctx context.Context, id int) error {
 	module, err := s.repo.GetByID(ctx, id)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get fiscal module: %w", err)
 	}
 
-	module.IsActive = true
-	return s.repo.Update(ctx, module)
+	if !module.IsActive {
+		module.IsActive = true
+		err = s.repo.Update(ctx, module)
+		if err != nil {
+			return fmt.Errorf("failed to update fiscal module: %w", err)
+		}
+	}
+
+	return nil
 }

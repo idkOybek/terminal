@@ -21,7 +21,7 @@ func NewTerminalRepository(db *sql.DB) *TerminalRepository {
 func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error) {
 	query := `
 		SELECT user_id 
-		FROM user_terminal_associations 
+		FROM users 
 		WHERE cash_register_number = $1`
 
 	var userID int

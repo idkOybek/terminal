@@ -19,12 +19,12 @@ type TerminalService struct {
 }
 
 func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService, logger *logger.Logger) *TerminalService {
-	return &TerminalService{
-		repo:                repo,
-		fiscalModuleRepo:    fiscalModuleRepo,
-		fiscalModuleService: fiscalModuleService,
-		logger:              logger,
-	}
+    return &TerminalService{
+        repo:                repo,
+        fiscalModuleRepo:    fiscalModuleRepo,
+        fiscalModuleService: fiscalModuleService,
+        logger:              logger,
+    }
 }
 
 func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {

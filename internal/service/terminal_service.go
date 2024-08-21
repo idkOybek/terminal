@@ -27,14 +27,18 @@ func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo rep
 func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {
 	fiscalModule, err := s.fiscalModuleRepo.GetByFactoryNumber(ctx, req.CashRegisterNumber)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get fiscal module: %w", err)
 	}
 	if fiscalModule == nil {
 		return nil, errors.New("no fiscal module found with the given cash register number")
 	}
+
 	userID, err := s.repo.GetUserIDByCashRegisterNumber(ctx, req.CashRegisterNumber)
 	if err != nil {
-		return nil, errors.New("failed to determine user for this terminal")
+		return nil, fmt.Errorf("failed to determine user for this terminal: %w", err)
+	}
+	if userID == 0 {
+		return nil, errors.New("user not found for this terminal")
 	}
 
 	lastRequestDate, _ := time.Parse(time.RFC3339, req.LastRequestDate)

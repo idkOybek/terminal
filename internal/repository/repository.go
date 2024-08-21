@@ -7,6 +7,7 @@ import (
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/repository/postgres"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type Repositories struct {
@@ -43,18 +44,18 @@ type TerminalRepository interface {
 	GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error)
 }
 
-func NewRepositories(db *sql.DB) *Repositories {
+func NewRepositories(db *sql.DB, logger *logger.Logger) *Repositories {
 	if db == nil {
 		log.Fatal("Database connection is nil")
 	}
 	return &Repositories{
-		User:         postgres.NewUserRepository(db),
-		FiscalModule: postgres.NewFiscalModuleRepository(db),
-		Terminal:     postgres.NewTerminalRepository(db),
+		User:         postgres.NewUserRepository(db, logger),
+		FiscalModule: postgres.NewFiscalModuleRepository(db, logger),
+		Terminal:     postgres.NewTerminalRepository(db, logger),
 	}
 }
 
 // Интерфейсы для функций создания репозиториев
-type UserRepoCreator func(*sql.DB) UserRepository
-type FiscalModuleRepoCreator func(*sql.DB) FiscalModuleRepository
-type TerminalRepoCreator func(*sql.DB) TerminalRepository
+type UserRepoCreator func(*sql.DB, *logger.Logger) UserRepository
+type FiscalModuleRepoCreator func(*sql.DB, *logger.Logger) FiscalModuleRepository
+type TerminalRepoCreator func(*sql.DB, *logger.Logger) TerminalRepository

@@ -6,16 +6,20 @@ import (
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
 	"github.com/idkOybek/newNewTerminal/internal/repository"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type FiscalModuleService struct {
-	repo repository.FiscalModuleRepository
+	repo   repository.FiscalModuleRepository
+	logger *logger.Logger
 }
 
-func NewFiscalModuleService(repo repository.FiscalModuleRepository) *FiscalModuleService {
-	return &FiscalModuleService{repo: repo}
+func NewFiscalModuleService(repo repository.FiscalModuleRepository, logger *logger.Logger) *FiscalModuleService {
+	return &FiscalModuleService{
+		repo:   repo,
+		logger: logger,
+	}
 }
-
 func (s *FiscalModuleService) Create(ctx context.Context, req *models.FiscalModuleCreateRequest) (*models.FiscalModuleResponse, error) {
 	module := &models.FiscalModule{
 		FiscalNumber:  req.FiscalNumber,
@@ -103,17 +107,26 @@ func (s *FiscalModuleService) List(ctx context.Context) ([]*models.FiscalModuleR
 }
 
 func (s *FiscalModuleService) Activate(ctx context.Context, id int) error {
+	s.logger.Info("Starting fiscal module activation", "id", id)
+
 	module, err := s.repo.GetByID(ctx, id)
 	if err != nil {
+		s.logger.Error("Failed to get fiscal module", "id", id, "error", err)
 		return fmt.Errorf("failed to get fiscal module: %w", err)
 	}
+	s.logger.Info("Fiscal module retrieved", "id", id, "current_status", module.IsActive)
 
 	if !module.IsActive {
 		module.IsActive = true
+		s.logger.Info("Updating fiscal module status", "id", id, "new_status", true)
 		err = s.repo.Update(ctx, module)
 		if err != nil {
+			s.logger.Error("Failed to update fiscal module", "id", id, "error", err)
 			return fmt.Errorf("failed to update fiscal module: %w", err)
 		}
+		s.logger.Info("Fiscal module activated successfully", "id", id)
+	} else {
+		s.logger.Info("Fiscal module already active", "id", id)
 	}
 
 	return nil

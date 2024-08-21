@@ -8,14 +8,19 @@ import (
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type UserRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{db: db}
+func NewUserRepository(db *sql.DB, logger *logger.Logger) *UserRepository {
+	return &UserRepository{
+		db:     db,
+		logger: logger,
+	}
 }
 
 func (r *UserRepository) Create(ctx context.Context, user *models.User) error {

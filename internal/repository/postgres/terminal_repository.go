@@ -8,14 +8,19 @@ import (
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type TerminalRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
-func NewTerminalRepository(db *sql.DB) *TerminalRepository {
-	return &TerminalRepository{db: db}
+func NewTerminalRepository(db *sql.DB, logger *logger.Logger) *TerminalRepository {
+	return &TerminalRepository{
+		db:     db,
+		logger: logger,
+	}
 }
 
 func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error) {

@@ -3,19 +3,25 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/idkOybek/newNewTerminal/internal/models"
+	"github.com/idkOybek/newNewTerminal/pkg/logger"
 )
 
 type FiscalModuleRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logger.Logger
 }
 
-func NewFiscalModuleRepository(db *sql.DB) *FiscalModuleRepository {
-	return &FiscalModuleRepository{db: db}
+func NewFiscalModuleRepository(db *sql.DB, logger *logger.Logger) *FiscalModuleRepository {
+	return &FiscalModuleRepository{
+		db:     db,
+		logger: logger,
+	}
 }
 
 func (r *FiscalModuleRepository) Create(ctx context.Context, module *models.FiscalModule) error {
@@ -70,6 +76,8 @@ func (r *FiscalModuleRepository) GetByID(ctx context.Context, id int) (*models.F
 }
 
 func (r *FiscalModuleRepository) Update(ctx context.Context, module *models.FiscalModule) error {
+	r.logger.Info("Starting fiscal module update", "id", module.ID, "is_active", module.IsActive)
+
 	query := "UPDATE fiscal_modules SET "
 	args := []interface{}{}
 	argId := 1
@@ -92,10 +100,29 @@ func (r *FiscalModuleRepository) Update(ctx context.Context, module *models.Fisc
 	query += fmt.Sprintf("WHERE id = $%d", argId)
 	args = append(args, module.ID)
 
-	_, err := r.db.ExecContext(ctx, query, args...)
-	return err
-}
+	r.logger.Info("Executing update query", "query", query, "args", args)
 
+	result, err := r.db.ExecContext(ctx, query, args...)
+	if err != nil {
+		r.logger.Error("Failed to execute update query", "error", err)
+		return fmt.Errorf("failed to update fiscal module: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		r.logger.Error("Failed to get rows affected", "error", err)
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	r.logger.Info("Fiscal module update completed", "id", module.ID, "rows_affected", rowsAffected)
+
+	if rowsAffected == 0 {
+		r.logger.Warn("No rows were updated", "id", module.ID)
+		return errors.New("no rows were updated")
+	}
+
+	return nil
+}
 func (r *FiscalModuleRepository) Delete(ctx context.Context, id int) error {
 	query := `DELETE FROM fiscal_modules WHERE id = $1`
 

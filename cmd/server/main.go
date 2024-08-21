@@ -64,7 +64,7 @@ func main() {
 		logger.Fatal("Failed to ping database", zap.Error(err))
 	}
 	// Initialize repositories
-	repos := repository.NewRepositories(db)
+	repos := repository.NewRepositories(db, logger)
 
 	// Initialize services
 	services := service.NewServices(service.Deps{

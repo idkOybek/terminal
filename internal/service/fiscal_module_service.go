@@ -100,6 +100,7 @@ func (s *FiscalModuleService) List(ctx context.Context) ([]*models.FiscalModuleR
 			FiscalNumber:  module.FiscalNumber,
 			FactoryNumber: module.FactoryNumber,
 			UserID:        module.UserID,
+			IsActive:      module.IsActive,
 		})
 	}
 

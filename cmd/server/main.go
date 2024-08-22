@@ -46,20 +46,15 @@ import (
 // @name Authorization
 func main() {
 	// Load configuration
-	logger, err := logger.NewLogger()
-	if err != nil {
-		log.Fatalf("Failed to create logger: %v", err)
-	}
-
-	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		logger.Fatal("Failed to load config", zap.Error(err))
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	// Set log level from config
-	if err := logger.SetLevel(cfg.LogLevel); err != nil {
-		logger.Warn("Failed to set log level", zap.Error(err))
+	// Initialize logger
+	logger, err := logger.NewLogger(cfg.LogLevel)
+	if err != nil {
+		log.Fatalf("Failed to create logger: %v", err)
 	}
 
 	// Connect to database

@@ -48,6 +48,9 @@ func NewRepositories(db *sql.DB, logger *logger.Logger) *Repositories {
 	if db == nil {
 		log.Fatal("Database connection is nil")
 	}
+	if logger == nil {
+		log.Fatal("Logger is nil")
+	}
 	return &Repositories{
 		User:         postgres.NewUserRepository(db, logger),
 		FiscalModule: postgres.NewFiscalModuleRepository(db, logger),

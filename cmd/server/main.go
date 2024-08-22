@@ -45,15 +45,16 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	// Initialize logger
-	logger := logger.NewLogger()
-	if logger == nil {
-		log.Fatal("Failed to create logger")
-	}
 	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		logger.Fatal("Failed to load config", zap.Error(err))
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Initialize logger
+	logger, err := logger.NewLogger(cfg.LogLevel)
+	if err != nil {
+		log.Fatalf("Failed to create logger: %v", err)
 	}
 
 	// Connect to database
@@ -66,12 +67,14 @@ func main() {
 	if err := db.Ping(); err != nil {
 		logger.Fatal("Failed to ping database", zap.Error(err))
 	}
+
 	// Initialize repositories
 	repos := repository.NewRepositories(db, logger)
 
 	// Initialize services
 	services := service.NewServices(service.Deps{
-		Repos: repos,
+		Repos:  repos,
+		Logger: logger,
 	})
 
 	// Initialize handlers

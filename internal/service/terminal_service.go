@@ -19,6 +19,25 @@ type TerminalService struct {
 	logger              *logger.Logger
 }
 
+func (s *TerminalService) CheckExists(ctx context.Context, cashRegisterNumber string) (*models.TerminalExistsResponse, error) {
+	terminal, err := s.repo.GetByCashRegisterNumber(ctx, cashRegisterNumber)
+	if err != nil {
+		return nil, err
+	}
+	if terminal == nil {
+		return nil, errors.New("terminal not found")
+	}
+	return &models.TerminalExistsResponse{ID: terminal.ID}, nil
+}
+
+func (s *TerminalService) GetStatus(ctx context.Context, id int) (*models.TerminalStatusResponse, error) {
+	isActive, err := s.repo.GetStatus(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &models.TerminalStatusResponse{IsActive: isActive}, nil
+}
+
 func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService, logger *logger.Logger) *TerminalService {
 	if logger == nil {
 		log.Println("Error: logger is nil in NewTerminalService")

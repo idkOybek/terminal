@@ -44,3 +44,15 @@ type TerminalUpdateRequest struct {
 	UserID             *int    `json:"user_id,omitempty"`
 	FreeRecordBalance  *int    `json:"free_record_balance,omitempty"`
 }
+
+type TerminalExistsRequest struct {
+	CashRegisterNumber string `json:"cash_register_number"`
+}
+
+type TerminalExistsResponse struct {
+	ID int `json:"id"`
+}
+
+type TerminalStatusResponse struct {
+	IsActive bool `json:"is_active"`
+}

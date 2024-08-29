@@ -64,6 +64,65 @@ func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Security Bearer
+// @Summary Get an exists of terminal by CashRegister
+// @Description Get an exists of terminal by CashRegister
+// @Tags terminals
+// @Accept  json
+// @Produce  json
+// @Param terminal body models.TerminalExistsRequest true "Get an exists of terminal by CashRegister"
+// @Success 200 {object} models.Terminal
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /terminals/exists [get]
+func (h *TerminalHandler) CheckExists(w http.ResponseWriter, r *http.Request) {
+	var req models.TerminalExistsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.logger.Error("Failed to decode request body", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	response, err := h.service.CheckExists(r.Context(), req.CashRegisterNumber)
+	if err != nil {
+		h.logger.Error("Failed to check terminal existence", "error", err)
+		RespondWithError(w, http.StatusNotFound, "Terminal not found")
+		return
+	}
+
+	RespondWithJSON(w, http.StatusOK, response)
+}
+
+// @Security Bearer
+// @Summary Get a status of terminal by ID
+// @Description Get status of terminal by its ID
+// @Tags terminals
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Terminal ID"
+// @Success 200 {object} models.Terminal
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @Router /terminals/status/{id} [get]
+func (h *TerminalHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		h.logger.Error("Invalid terminal ID", "error", err)
+		RespondWithError(w, http.StatusBadRequest, "Invalid terminal ID")
+		return
+	}
+
+	status, err := h.service.GetStatus(r.Context(), id)
+	if err != nil {
+		h.logger.Error("Failed to get terminal status", "error", err)
+		RespondWithError(w, http.StatusNotFound, "Terminal not found")
+		return
+	}
+
+	RespondWithJSON(w, http.StatusOK, status)
+}
+
+// @Security Bearer
 // @Summary Get a terminal by ID
 // @Description Get details of a terminal by its ID
 // @Tags terminals
@@ -185,5 +244,7 @@ func (h *TerminalHandler) Routes() chi.Router {
 	r.Put("/{id}", h.Update)
 	r.Delete("/{id}", h.Delete)
 	r.Get("/", h.List)
+	r.Post("/exists", h.CheckExists)
+	r.Get("/status/{id}", h.GetStatus)
 	return r
 }

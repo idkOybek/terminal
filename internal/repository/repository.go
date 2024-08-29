@@ -36,6 +36,8 @@ type FiscalModuleRepository interface {
 }
 
 type TerminalRepository interface {
+	GetByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (*models.Terminal, error)
+	GetStatus(ctx context.Context, id int) (bool, error)
 	Create(ctx context.Context, terminal *models.Terminal) error
 	GetByID(ctx context.Context, id int) (*models.Terminal, error)
 	Update(ctx context.Context, terminal *models.Terminal) error

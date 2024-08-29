@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -21,6 +22,45 @@ func NewTerminalRepository(db *sql.DB, logger *logger.Logger) *TerminalRepositor
 		db:     db,
 		logger: logger,
 	}
+}
+
+func (r *TerminalRepository) GetByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (*models.Terminal, error) {
+	var terminal models.Terminal
+	err := r.db.QueryRowContext(ctx, `
+        SELECT id, assembly_number, inn, company_name, address, cash_register_number, 
+               module_number, last_request_date, database_update_date, is_active, user_id, 
+               free_record_balance, created_at, updated_at 
+        FROM terminals 
+        WHERE cash_register_number = $1
+    `, cashRegisterNumber).Scan(
+		&terminal.ID, &terminal.AssemblyNumber, &terminal.INN, &terminal.CompanyName,
+		&terminal.Address, &terminal.CashRegisterNumber, &terminal.ModuleNumber,
+		&terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.IsActive,
+		&terminal.UserID, &terminal.FreeRecordBalance, &terminal.CreatedAt, &terminal.UpdatedAt,
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &terminal, nil
+}
+
+func (r *TerminalRepository) GetStatus(ctx context.Context, id int) (bool, error) {
+	var isActive bool
+	err := r.db.QueryRowContext(ctx, `
+        SELECT is_active FROM terminals WHERE id = $1
+    `, id).Scan(&isActive)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, errors.New("terminal not found")
+		}
+		return false, err
+	}
+	return isActive, nil
 }
 
 func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, cashRegisterNumber string) (int, error) {

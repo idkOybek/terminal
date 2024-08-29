@@ -1,11 +1,11 @@
 basePath: /api
 definitions:
-  github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse:
+  models.ErrorResponse:
     properties:
       error:
         type: string
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.ExportRequest:
+  models.ExportRequest:
     properties:
       filename:
         type: string
@@ -15,7 +15,7 @@ definitions:
           type: object
         type: array
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleCreateRequest:
+  models.FiscalModuleCreateRequest:
     properties:
       factory_number:
         type: string
@@ -26,7 +26,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse:
+  models.FiscalModuleResponse:
     properties:
       factory_number:
         type: string
@@ -39,7 +39,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleUpdateRequest:
+  models.FiscalModuleUpdateRequest:
     properties:
       factory_number:
         type: string
@@ -50,7 +50,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.Terminal:
+  models.Terminal:
     properties:
       address:
         type: string
@@ -81,7 +81,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.TerminalCreateRequest:
+  models.TerminalCreateRequest:
     properties:
       address:
         type: string
@@ -102,7 +102,12 @@ definitions:
       module_number:
         type: string
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.TerminalUpdateRequest:
+  models.TerminalExistsRequest:
+    properties:
+      cash_register_number:
+        type: string
+    type: object
+  models.TerminalUpdateRequest:
     properties:
       address:
         type: string
@@ -127,7 +132,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.User:
+  models.User:
     properties:
       company_name:
         type: string
@@ -148,7 +153,7 @@ definitions:
       username:
         type: string
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest:
+  models.UserCreateRequest:
     properties:
       company_name:
         type: string
@@ -163,21 +168,21 @@ definitions:
       username:
         type: string
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.UserLoginRequest:
+  models.UserLoginRequest:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.UserLoginResponse:
+  models.UserLoginResponse:
     properties:
       token:
         type: string
       user:
-        $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+        $ref: '#/definitions/models.User'
     type: object
-  github_com_idkOybek_newNewTerminal_internal_models.UserUpdateRequest:
+  models.UserUpdateRequest:
     properties:
       company_name:
         type: string
@@ -217,26 +222,26 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserLoginRequest'
+          $ref: '#/definitions/models.UserLoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserLoginResponse'
+            $ref: '#/definitions/models.UserLoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       summary: Login user
       tags:
       - auth
@@ -251,22 +256,22 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest'
+          $ref: '#/definitions/models.UserCreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       summary: Register a new user
       tags:
       - auth
@@ -281,7 +286,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ExportRequest'
+          $ref: '#/definitions/models.ExportRequest'
       produces:
       - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
       responses:
@@ -292,11 +297,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Export data to XLSX
@@ -314,12 +319,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse'
+              $ref: '#/definitions/models.FiscalModuleResponse'
             type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: List all fiscal modules
@@ -335,22 +340,22 @@ paths:
         name: fiscal_module
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleCreateRequest'
+          $ref: '#/definitions/models.FiscalModuleCreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Create a new fiscal module
@@ -375,11 +380,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a fiscal module
@@ -401,15 +406,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Get a fiscal module by ID
@@ -430,26 +435,26 @@ paths:
         name: fiscal_module
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleUpdateRequest'
+          $ref: '#/definitions/models.FiscalModuleUpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.FiscalModuleResponse'
+            $ref: '#/definitions/models.FiscalModuleResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Update a fiscal module
@@ -467,12 +472,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal'
+              $ref: '#/definitions/models.Terminal'
             type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: List all terminals
@@ -488,22 +493,22 @@ paths:
         name: terminal
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.TerminalCreateRequest'
+          $ref: '#/definitions/models.TerminalCreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal'
+            $ref: '#/definitions/models.Terminal'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Create a new terminal
@@ -528,11 +533,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a terminal
@@ -554,15 +559,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal'
+            $ref: '#/definitions/models.Terminal'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Get a terminal by ID
@@ -583,29 +588,92 @@ paths:
         name: terminal
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.TerminalUpdateRequest'
+          $ref: '#/definitions/models.TerminalUpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.Terminal'
+            $ref: '#/definitions/models.Terminal'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Update a terminal
+      tags:
+      - terminals
+  /terminals/exists:
+    get:
+      consumes:
+      - application/json
+      description: Get an exists of terminal by CashRegister
+      parameters:
+      - description: Get an exists of terminal by CashRegister
+        in: body
+        name: terminal
+        required: true
+        schema:
+          $ref: '#/definitions/models.TerminalExistsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Terminal'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get an exists of terminal by CashRegister
+      tags:
+      - terminals
+  /terminals/status/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get status of terminal by its ID
+      parameters:
+      - description: Terminal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Terminal'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get a status of terminal by ID
       tags:
       - terminals
   /users:
@@ -620,12 +688,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+              $ref: '#/definitions/models.User'
             type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: List all users
@@ -641,22 +709,22 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserCreateRequest'
+          $ref: '#/definitions/models.UserCreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Create a new user
@@ -681,11 +749,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Delete a user
@@ -707,15 +775,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+            $ref: '#/definitions/models.User'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Get a user by ID
@@ -736,26 +804,26 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.UserUpdateRequest'
+          $ref: '#/definitions/models.UserUpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.User'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_idkOybek_newNewTerminal_internal_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
       summary: Update a user

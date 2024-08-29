@@ -520,7 +520,7 @@ const docTemplate = `{
                 "summary": "Get an exists of terminal by CashRegister",
                 "parameters": [
                     {
-                        "description": "Get an exists of terminal by CashRegister",
+                        "description": "Get an exists request",
                         "name": "terminal",
                         "in": "body",
                         "required": true,
@@ -533,7 +533,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Terminal"
+                            "$ref": "#/definitions/models.TerminalExistsResponse"
                         }
                     },
                     "404": {
@@ -582,7 +582,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Terminal"
+                            "$ref": "#/definitions/models.TerminalStatusResponse"
                         }
                     },
                     "404": {
@@ -1159,6 +1159,22 @@ const docTemplate = `{
             "properties": {
                 "cash_register_number": {
                     "type": "string"
+                }
+            }
+        },
+        "models.TerminalExistsResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TerminalStatusResponse": {
+            "type": "object",
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
                 }
             }
         },

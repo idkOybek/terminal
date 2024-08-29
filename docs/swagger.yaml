@@ -107,6 +107,16 @@ definitions:
       cash_register_number:
         type: string
     type: object
+  models.TerminalExistsResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  models.TerminalStatusResponse:
+    properties:
+      is_active:
+        type: boolean
+    type: object
   models.TerminalUpdateRequest:
     properties:
       address:
@@ -619,7 +629,7 @@ paths:
       - application/json
       description: Get an exists of terminal by CashRegister
       parameters:
-      - description: Get an exists of terminal by CashRegister
+      - description: Get an exists request
         in: body
         name: terminal
         required: true
@@ -631,7 +641,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Terminal'
+            $ref: '#/definitions/models.TerminalExistsResponse'
         "404":
           description: Not Found
           schema:
@@ -662,7 +672,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Terminal'
+            $ref: '#/definitions/models.TerminalStatusResponse'
         "404":
           description: Not Found
           schema:

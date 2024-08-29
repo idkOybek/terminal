@@ -38,7 +38,6 @@ func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger)
 // @Tags terminals
 // @Accept  json
 // @Produce  json
-// @Param terminal body models.TerminalCreateRequest true "Create terminal request"
 // @Success 201 {object} models.Terminal
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse

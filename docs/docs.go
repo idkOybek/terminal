@@ -467,17 +467,6 @@ const docTemplate = `{
                     "terminals"
                 ],
                 "summary": "Create a new terminal",
-                "parameters": [
-                    {
-                        "description": "Create terminal request",
-                        "name": "terminal",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.TerminalCreateRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -1119,38 +1108,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.TerminalCreateRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "assembly_number": {
-                    "type": "string"
-                },
-                "cash_register_number": {
-                    "type": "string"
-                },
-                "company_name": {
-                    "type": "string"
-                },
-                "database_update_date": {
-                    "type": "string"
-                },
-                "free_record_balance": {
-                    "type": "integer"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "last_request_date": {
-                    "type": "string"
-                },
-                "module_number": {
-                    "type": "string"
                 }
             }
         },

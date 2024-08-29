@@ -38,6 +38,7 @@ func NewTerminalHandler(service *service.TerminalService, logger *logger.Logger)
 // @Tags terminals
 // @Accept  json
 // @Produce  json
+// @Param terminal body models.TerminalCreateRequest true "Create terminal request"
 // @Success 201 {object} models.Terminal
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
@@ -63,16 +64,16 @@ func (h *TerminalHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Security Bearer
-// @Summary Get an exists of terminal by CashRegister
-// @Description Get an exists of terminal by CashRegister
+// @Summary Check an exists of terminal by CashRegister
+// @Description Check an exists of terminal by CashRegister
 // @Tags terminals
 // @Accept  json
 // @Produce  json
-// @Param terminal body models.TerminalExistsRequest true "Get an exists request"
+// @Param terminal body models.TerminalExistsRequest true "Cash register number"
 // @Success 200 {object} models.TerminalExistsResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @Router /terminals/exists [get]
+// @Router /terminals/exists [Post]
 func (h *TerminalHandler) CheckExists(w http.ResponseWriter, r *http.Request) {
 	var req models.TerminalExistsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

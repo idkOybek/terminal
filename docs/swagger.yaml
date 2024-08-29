@@ -81,6 +81,27 @@ definitions:
       user_id:
         type: integer
     type: object
+  models.TerminalCreateRequest:
+    properties:
+      address:
+        type: string
+      assembly_number:
+        type: string
+      cash_register_number:
+        type: string
+      company_name:
+        type: string
+      database_update_date:
+        type: string
+      free_record_balance:
+        type: integer
+      inn:
+        type: string
+      last_request_date:
+        type: string
+      module_number:
+        type: string
+    type: object
   models.TerminalExistsRequest:
     properties:
       cash_register_number:
@@ -476,6 +497,13 @@ paths:
       consumes:
       - application/json
       description: Create a new terminal with the given input
+      parameters:
+      - description: Create terminal request
+        in: body
+        name: terminal
+        required: true
+        schema:
+          $ref: '#/definitions/models.TerminalCreateRequest'
       produces:
       - application/json
       responses:
@@ -596,12 +624,12 @@ paths:
       tags:
       - terminals
   /terminals/exists:
-    get:
+    post:
       consumes:
       - application/json
-      description: Get an exists of terminal by CashRegister
+      description: Check an exists of terminal by CashRegister
       parameters:
-      - description: Get an exists request
+      - description: Cash register number
         in: body
         name: terminal
         required: true
@@ -624,7 +652,7 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       security:
       - Bearer: []
-      summary: Get an exists of terminal by CashRegister
+      summary: Check an exists of terminal by CashRegister
       tags:
       - terminals
   /terminals/status/{id}:

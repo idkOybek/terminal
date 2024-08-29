@@ -467,6 +467,17 @@ const docTemplate = `{
                     "terminals"
                 ],
                 "summary": "Create a new terminal",
+                "parameters": [
+                    {
+                        "description": "Create terminal request",
+                        "name": "terminal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TerminalCreateRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -490,13 +501,13 @@ const docTemplate = `{
             }
         },
         "/terminals/exists": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "description": "Get an exists of terminal by CashRegister",
+                "description": "Check an exists of terminal by CashRegister",
                 "consumes": [
                     "application/json"
                 ],
@@ -506,10 +517,10 @@ const docTemplate = `{
                 "tags": [
                     "terminals"
                 ],
-                "summary": "Get an exists of terminal by CashRegister",
+                "summary": "Check an exists of terminal by CashRegister",
                 "parameters": [
                     {
-                        "description": "Get an exists request",
+                        "description": "Cash register number",
                         "name": "terminal",
                         "in": "body",
                         "required": true,
@@ -1108,6 +1119,38 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.TerminalCreateRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "assembly_number": {
+                    "type": "string"
+                },
+                "cash_register_number": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "database_update_date": {
+                    "type": "string"
+                },
+                "free_record_balance": {
+                    "type": "integer"
+                },
+                "inn": {
+                    "type": "string"
+                },
+                "last_request_date": {
+                    "type": "string"
+                },
+                "module_number": {
+                    "type": "string"
                 }
             }
         },

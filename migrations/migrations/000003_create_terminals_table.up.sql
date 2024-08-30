@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS terminals (
     id SERIAL PRIMARY KEY,
-    assembly_number VARCHAR(255) UNIQUE NOT NULL,
+    assembly_number VARCHAR(255) NOT NULL,
     inn VARCHAR(12) NOT NULL,
     company_name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,

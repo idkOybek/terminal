@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -186,25 +185,20 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args = append(args, time.Now())
 	argId++
 
+	// Добавляем новое поле StatusChangedByAdmin
 	query += fmt.Sprintf("status_changed_by_admin = $%d, ", argId)
 	args = append(args, terminal.StatusChangedByAdmin)
 	argId++
 
-	// Добавим логирование
-	log.Printf("SQL Query: %s", query)
-	log.Printf("SQL Args: %v", args)
 	// Удаляем последнюю запятую и добавляем условие WHERE
 	query = strings.TrimSuffix(query, ", ") + fmt.Sprintf(" WHERE id = $%d", argId)
 	args = append(args, terminal.ID)
 
 	// Выполняем запрос
-	result, err := r.db.ExecContext(ctx, query, args...)
+	_, err := r.db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to update terminal: %w", err)
 	}
-
-	rowsAffected, _ := result.RowsAffected()
-	log.Printf("Rows affected by update: %d", rowsAffected)
 
 	return nil
 }

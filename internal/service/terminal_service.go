@@ -188,10 +188,10 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 		terminal.DatabaseUpdateDate = databaseUpdateDate
 	}
 	if req.IsActive != nil {
-		if terminal.StatusChangedByAdmin && !isAdmin && terminal.IsActive {
-			// Если статус был изменен админом, терминал активен, и обычный пользователь пытается его деактивировать
-			s.logger.Warn("Attempt to deactivate terminal by non-admin user", "terminalID", id, "currentStatus", terminal.IsActive, "requestedStatus", *req.IsActive)
-			return nil, errors.New("только администратор может деактивировать терминал, активированный администратором")
+		if !isAdmin && terminal.StatusChangedByAdmin && !terminal.IsActive {
+			// Если обычный пользователь пытается изменить неактивный статус, установленный админом
+			s.logger.Warn("Attempt to change inactive status set by admin", "terminalID", id, "currentStatus", terminal.IsActive, "requestedStatus", *req.IsActive)
+			return nil, errors.New("нельзя изменить неактивный статус, установленный администратором")
 		}
 		if *req.IsActive != terminal.IsActive {
 			s.logger.Info("Changing terminal status", "terminalID", id, "oldStatus", terminal.IsActive, "newStatus", *req.IsActive, "changedByAdmin", isAdmin)

@@ -102,7 +102,7 @@ func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Termi
 	query := `
         SELECT id, assembly_number, inn, company_name, address, cash_register_number, 
                module_number, last_request_date, database_update_date, is_active, 
-               user_id, free_record_balance, created_at, updated_at
+               user_id, free_record_balance, created_at, updated_at, status_changed_by_admin
         FROM terminals
         WHERE id = $1`
 
@@ -112,6 +112,7 @@ func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Termi
 		&terminal.Address, &terminal.CashRegisterNumber, &terminal.ModuleNumber,
 		&terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.IsActive,
 		&terminal.UserID, &terminal.FreeRecordBalance, &terminal.CreatedAt, &terminal.UpdatedAt,
+		&terminal.StatusChangedByAdmin,
 	)
 
 	if err != nil {
@@ -198,7 +199,7 @@ func (r *TerminalRepository) List(ctx context.Context) ([]*models.Terminal, erro
 	query := `
         SELECT id, assembly_number, inn, company_name, address, cash_register_number, 
                module_number, last_request_date, database_update_date, is_active, 
-               user_id, free_record_balance, created_at, updated_at
+               user_id, free_record_balance, created_at, updated_at, status_changed_by_admin
         FROM terminals
         ORDER BY id`
 
@@ -216,6 +217,7 @@ func (r *TerminalRepository) List(ctx context.Context) ([]*models.Terminal, erro
 			&terminal.Address, &terminal.CashRegisterNumber, &terminal.ModuleNumber,
 			&terminal.LastRequestDate, &terminal.DatabaseUpdateDate, &terminal.IsActive,
 			&terminal.UserID, &terminal.FreeRecordBalance, &terminal.CreatedAt, &terminal.UpdatedAt,
+			&terminal.StatusChangedByAdmin,
 		)
 		if err != nil {
 			return nil, err

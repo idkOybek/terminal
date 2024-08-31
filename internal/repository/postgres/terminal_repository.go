@@ -100,9 +100,7 @@ func (r *TerminalRepository) Create(ctx context.Context, terminal *models.Termin
 
 func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Terminal, error) {
 	query := `
-        SELECT id, assembly_number, inn, company_name, address, cash_register_number, 
-               module_number, last_request_date, database_update_date, is_active, 
-               user_id, free_record_balance, created_at, updated_at, status_changed_by_admin
+        SELECT *
         FROM terminals
         WHERE id = $1`
 
@@ -197,9 +195,7 @@ func (r *TerminalRepository) Delete(ctx context.Context, id int) error {
 
 func (r *TerminalRepository) List(ctx context.Context) ([]*models.Terminal, error) {
 	query := `
-        SELECT id, assembly_number, inn, company_name, address, cash_register_number, 
-               module_number, last_request_date, database_update_date, is_active, 
-               user_id, free_record_balance, created_at, updated_at, status_changed_by_admin
+        SELECT *
         FROM terminals
         ORDER BY id`
 

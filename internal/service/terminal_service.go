@@ -19,25 +19,6 @@ type TerminalService struct {
 	logger              *logger.Logger
 }
 
-func (s *TerminalService) CheckExists(ctx context.Context, cashRegisterNumber string) (*models.TerminalExistsResponse, error) {
-	terminal, err := s.repo.GetByCashRegisterNumber(ctx, cashRegisterNumber)
-	if err != nil {
-		return nil, err
-	}
-	if terminal == nil {
-		return nil, errors.New("terminal not found")
-	}
-	return &models.TerminalExistsResponse{ID: terminal.ID}, nil
-}
-
-func (s *TerminalService) GetStatus(ctx context.Context, id int) (*models.TerminalStatusResponse, error) {
-	isActive, err := s.repo.GetStatus(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return &models.TerminalStatusResponse{IsActive: isActive}, nil
-}
-
 func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo repository.FiscalModuleRepository, fiscalModuleService *FiscalModuleService, logger *logger.Logger) *TerminalService {
 	if logger == nil {
 		log.Println("Error: logger is nil in NewTerminalService")
@@ -65,6 +46,25 @@ func NewTerminalService(repo repository.TerminalRepository, fiscalModuleRepo rep
 		fiscalModuleService: fiscalModuleService,
 		logger:              logger,
 	}
+}
+
+func (s *TerminalService) CheckExists(ctx context.Context, cashRegisterNumber string) (*models.TerminalExistsResponse, error) {
+	terminal, err := s.repo.GetByCashRegisterNumber(ctx, cashRegisterNumber)
+	if err != nil {
+		return nil, err
+	}
+	if terminal == nil {
+		return nil, errors.New("terminal not found")
+	}
+	return &models.TerminalExistsResponse{ID: terminal.ID}, nil
+}
+
+func (s *TerminalService) GetStatus(ctx context.Context, id int) (*models.TerminalStatusResponse, error) {
+	isActive, err := s.repo.GetStatus(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &models.TerminalStatusResponse{IsActive: isActive}, nil
 }
 
 func (s *TerminalService) Create(ctx context.Context, req *models.TerminalCreateRequest) (*models.Terminal, error) {
@@ -149,6 +149,12 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	if err != nil {
 		return nil, err
 	}
+
+	isAdmin, ok := ctx.Value("userRole").(bool)
+	if !ok {
+		return nil, errors.New("не удалось определить роль пользователя")
+	}
+
 	if req.AssemblyNumber != nil {
 		terminal.AssemblyNumber = *req.AssemblyNumber
 	}
@@ -169,18 +175,25 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	}
 	if req.LastRequestDate != nil {
 		lastRequestDate, err := time.Parse(time.RFC3339, *req.LastRequestDate)
-		if err == nil {
-			terminal.LastRequestDate = lastRequestDate
+		if err != nil {
+			return nil, fmt.Errorf("неверный формат даты LastRequestDate: %v", err)
 		}
+		terminal.LastRequestDate = lastRequestDate
 	}
 	if req.DatabaseUpdateDate != nil {
 		databaseUpdateDate, err := time.Parse(time.RFC3339, *req.DatabaseUpdateDate)
-		if err == nil {
-			terminal.DatabaseUpdateDate = databaseUpdateDate
+		if err != nil {
+			return nil, fmt.Errorf("неверный формат даты DatabaseUpdateDate: %v", err)
 		}
+		terminal.DatabaseUpdateDate = databaseUpdateDate
 	}
+
 	if req.IsActive != nil {
+		if terminal.StatusChangedByAdmin && !isAdmin {
+			return nil, errors.New("только администратор может изменить статус терминала")
+		}
 		terminal.IsActive = *req.IsActive
+		terminal.StatusChangedByAdmin = isAdmin
 	}
 	if req.UserID != nil {
 		terminal.UserID = *req.UserID

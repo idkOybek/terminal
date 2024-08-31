@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS terminals (
     id SERIAL PRIMARY KEY,
     assembly_number VARCHAR(255) NOT NULL,
-    inn VARCHAR(255) NOT NULL,
+    inn VARCHAR(12) NOT NULL,
     company_name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
-    cash_register_number VARCHAR(255) UNIQUE NOT NULL REFERENCES fiscal_modules(factory_number),
+    cash_register_number VARCHAR(255) UNIQUE NOT NULL,
     module_number VARCHAR(255) NOT NULL,
     last_request_date TIMESTAMP WITH TIME ZONE,
     database_update_date TIMESTAMP WITH TIME ZONE,

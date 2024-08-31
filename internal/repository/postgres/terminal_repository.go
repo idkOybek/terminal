@@ -180,6 +180,11 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args = append(args, terminal.FreeRecordBalance)
 	argId++
 
+	// Добавляем новое поле StatusChangedByAdmin
+	query += fmt.Sprintf("status_changed_by_admin = $%d, ", argId)
+	args = append(args, terminal.StatusChangedByAdmin)
+	argId++
+
 	// Всегда обновляем поле updated_at
 	query += fmt.Sprintf("updated_at = $%d ", argId)
 	args = append(args, time.Now())

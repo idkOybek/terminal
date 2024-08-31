@@ -182,7 +182,7 @@ func (h *TerminalHandler) Update(w http.ResponseWriter, r *http.Request) {
 	terminal, err := h.service.Update(r.Context(), id, &req)
 	if err != nil {
 		h.logger.Error("Failed to update terminal", "error", err)
-		RespondWithError(w, http.StatusInternalServerError, "Failed to update terminal")
+		RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 

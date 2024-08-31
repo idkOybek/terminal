@@ -34,7 +34,10 @@ func AuthMiddleware(logger *logger.Logger) func(next http.Handler) http.Handler 
 				return
 			}
 
+			// Добавляем информацию о роли пользователя в контекст
 			ctx := context.WithValue(r.Context(), "user", claims)
+			ctx = context.WithValue(ctx, "userRole", claims.IsAdmin)
+
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

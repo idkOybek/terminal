@@ -25,7 +25,7 @@ func (s *FiscalModuleService) Create(ctx context.Context, req *models.FiscalModu
 		FiscalNumber:  req.FiscalNumber,
 		FactoryNumber: req.FactoryNumber,
 		UserID:        req.UserID,
-		IsActive:      req.IsActive, // Новое поле
+		IsActive:      req.IsActive,
 	}
 
 	err := s.repo.Create(ctx, module)
@@ -38,7 +38,7 @@ func (s *FiscalModuleService) Create(ctx context.Context, req *models.FiscalModu
 		FiscalNumber:  module.FiscalNumber,
 		FactoryNumber: module.FactoryNumber,
 		UserID:        module.UserID,
-		IsActive:      module.IsActive, // Новое поле
+		IsActive:      module.IsActive,
 	}, nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -180,10 +181,13 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args = append(args, terminal.FreeRecordBalance)
 	argId++
 
-	// Добавляем новое поле StatusChangedByAdmin
 	query += fmt.Sprintf("status_changed_by_admin = $%d, ", argId)
 	args = append(args, terminal.StatusChangedByAdmin)
 	argId++
+
+	// Добавим логирование
+	log.Printf("SQL Query: %s", query)
+	log.Printf("SQL Args: %v", args)
 
 	// Всегда обновляем поле updated_at
 	query += fmt.Sprintf("updated_at = $%d ", argId)

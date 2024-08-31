@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -179,7 +180,21 @@ func (h *TerminalHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	terminal, err := h.service.Update(r.Context(), id, &req)
+	// Получаем роль пользователя из контекста
+	isAdmin, ok := r.Context().Value("userRole").(bool)
+	if !ok {
+		h.logger.Error("Failed to get user role from context")
+		RespondWithError(w, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	// Добавим логирование
+	h.logger.Info("User role in handler", "isAdmin", isAdmin)
+
+	// Добавляем роль пользователя в контекст для сервиса
+	ctx := context.WithValue(r.Context(), "userRole", isAdmin)
+
+	terminal, err := h.service.Update(ctx, id, &req)
 	if err != nil {
 		h.logger.Error("Failed to update terminal", "error", err)
 		RespondWithError(w, http.StatusInternalServerError, err.Error())

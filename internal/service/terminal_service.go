@@ -155,6 +155,8 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 		return nil, errors.New("не удалось определить роль пользователя")
 	}
 
+	log.Printf("User role: isAdmin=%v", isAdmin)
+
 	if req.AssemblyNumber != nil {
 		terminal.AssemblyNumber = *req.AssemblyNumber
 	}
@@ -194,7 +196,11 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 		}
 		terminal.IsActive = *req.IsActive
 		terminal.StatusChangedByAdmin = isAdmin
+
+		// Добавим логирование
+		log.Printf("Updating terminal status: isActive=%v, statusChangedByAdmin=%v", terminal.IsActive, terminal.StatusChangedByAdmin)
 	}
+
 	if req.UserID != nil {
 		terminal.UserID = *req.UserID
 	}

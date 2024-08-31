@@ -38,6 +38,9 @@ func AuthMiddleware(logger *logger.Logger) func(next http.Handler) http.Handler 
 			ctx := context.WithValue(r.Context(), "user", claims)
 			ctx = context.WithValue(ctx, "userRole", claims.IsAdmin)
 
+			// Добавим логирование
+			logger.Info("User role in middleware", "isAdmin", claims.IsAdmin)
+
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

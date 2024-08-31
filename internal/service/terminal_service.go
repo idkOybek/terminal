@@ -189,10 +189,14 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	}
 	if req.IsActive != nil {
 		if terminal.StatusChangedByAdmin && !isAdmin {
+			s.logger.Warn("Attempt to change status by non-admin user", "terminalID", id, "currentStatus", terminal.IsActive, "requestedStatus", *req.IsActive)
 			return nil, errors.New("только администратор может изменить статус терминала")
 		}
-		terminal.IsActive = *req.IsActive
-		terminal.StatusChangedByAdmin = isAdmin
+		if *req.IsActive != terminal.IsActive {
+			s.logger.Info("Changing terminal status", "terminalID", id, "oldStatus", terminal.IsActive, "newStatus", *req.IsActive, "changedByAdmin", isAdmin)
+			terminal.IsActive = *req.IsActive
+			terminal.StatusChangedByAdmin = isAdmin
+		}
 	}
 	if req.FreeRecordBalance != nil {
 		terminal.FreeRecordBalance = *req.FreeRecordBalance

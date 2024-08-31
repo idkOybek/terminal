@@ -181,6 +181,11 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args = append(args, terminal.FreeRecordBalance)
 	argId++
 
+	// Всегда обновляем поле updated_at
+	query += fmt.Sprintf("updated_at = $%d ", argId)
+	args = append(args, time.Now())
+	argId++
+
 	query += fmt.Sprintf("status_changed_by_admin = $%d, ", argId)
 	args = append(args, terminal.StatusChangedByAdmin)
 	argId++
@@ -188,20 +193,20 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	// Добавим логирование
 	log.Printf("SQL Query: %s", query)
 	log.Printf("SQL Args: %v", args)
-
-	// Всегда обновляем поле updated_at
-	query += fmt.Sprintf("updated_at = $%d ", argId)
-	args = append(args, time.Now())
-	argId++
-
-	// Удаляем последнюю запятую и пробел, если они есть
-	query = strings.TrimSuffix(query, ", ")
-
-	query += fmt.Sprintf("WHERE id = $%d", argId)
+	// Удаляем последнюю запятую и добавляем условие WHERE
+	query = strings.TrimSuffix(query, ", ") + fmt.Sprintf(" WHERE id = $%d", argId)
 	args = append(args, terminal.ID)
 
-	_, err := r.db.ExecContext(ctx, query, args...)
-	return err
+	// Выполняем запрос
+	result, err := r.db.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to update terminal: %w", err)
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	log.Printf("Rows affected by update: %d", rowsAffected)
+
+	return nil
 }
 
 func (r *TerminalRepository) Delete(ctx context.Context, id int) error {

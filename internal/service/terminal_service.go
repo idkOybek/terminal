@@ -181,13 +181,18 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 			return nil, fmt.Errorf("неверный формат даты LastRequestDate: %v", err)
 		}
 		terminal.LastRequestDate = lastRequestDate
+	} else {
+		terminal.LastRequestDate = time.Now()
 	}
+
 	if req.DatabaseUpdateDate != nil {
 		databaseUpdateDate, err := time.Parse(time.RFC3339, *req.DatabaseUpdateDate)
 		if err != nil {
 			return nil, fmt.Errorf("неверный формат даты DatabaseUpdateDate: %v", err)
 		}
 		terminal.DatabaseUpdateDate = databaseUpdateDate
+	} else {
+		terminal.DatabaseUpdateDate = time.Now()
 	}
 
 	if req.IsActive != nil {

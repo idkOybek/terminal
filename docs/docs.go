@@ -1114,6 +1114,9 @@ const docTemplate = `{
                 "module_number": {
                     "type": "string"
                 },
+                "status_changed_by_admin": {
+                    "type": "boolean"
+                },
                 "updated_at": {
                     "type": "string"
                 },
@@ -1210,6 +1213,9 @@ const docTemplate = `{
                 },
                 "module_number": {
                     "type": "string"
+                },
+                "status_changed_by_admin": {
+                    "type": "boolean"
                 },
                 "user_id": {
                     "type": "integer"

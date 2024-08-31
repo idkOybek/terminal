@@ -126,79 +126,62 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	args := []interface{}{}
 	argId := 1
 
-	// Динамически формируем запрос для всех полей
-	if terminal.AssemblyNumber != "" {
-		query += fmt.Sprintf("assembly_number = $%d, ", argId)
-		args = append(args, terminal.AssemblyNumber)
-		argId++
-	}
-	if terminal.INN != "" {
-		query += fmt.Sprintf("inn = $%d, ", argId)
-		args = append(args, terminal.INN)
-		argId++
-	}
-	if terminal.CompanyName != "" {
-		query += fmt.Sprintf("company_name = $%d, ", argId)
-		args = append(args, terminal.CompanyName)
-		argId++
-	}
-	if terminal.Address != "" {
-		query += fmt.Sprintf("address = $%d, ", argId)
-		args = append(args, terminal.Address)
-		argId++
-	}
-	if terminal.CashRegisterNumber != "" {
-		query += fmt.Sprintf("cash_register_number = $%d, ", argId)
-		args = append(args, terminal.CashRegisterNumber)
-		argId++
-	}
-	if terminal.ModuleNumber != "" {
-		query += fmt.Sprintf("module_number = $%d, ", argId)
-		args = append(args, terminal.ModuleNumber)
-		argId++
+	// Функция для добавления поля в запрос, если оно не пустое
+	addField := func(field string, value interface{}) {
+		if value != nil && value != "" {
+			query += fmt.Sprintf("%s = $%d, ", field, argId)
+			args = append(args, value)
+			argId++
+		}
 	}
 
-	// Добавляем обновление для LastRequestDate и DatabaseUpdateDate
-	query += fmt.Sprintf("last_request_date = $%d, ", argId)
-	args = append(args, terminal.LastRequestDate)
-	argId++
-
-	query += fmt.Sprintf("database_update_date = $%d, ", argId)
-	args = append(args, terminal.DatabaseUpdateDate)
-	argId++
-
-	// Всегда обновляем is_active
-	query += fmt.Sprintf("is_active = $%d, ", argId)
-	args = append(args, terminal.IsActive)
-	argId++
-
-	query += fmt.Sprintf("user_id = $%d, ", argId)
-	args = append(args, terminal.UserID)
-	argId++
-
-	query += fmt.Sprintf("free_record_balance = $%d, ", argId)
-	args = append(args, terminal.FreeRecordBalance)
-	argId++
+	// Добавляем поля в запрос, только если они не пустые
+	addField("assembly_number", terminal.AssemblyNumber)
+	addField("inn", terminal.INN)
+	addField("company_name", terminal.CompanyName)
+	addField("address", terminal.Address)
+	addField("module_number", terminal.ModuleNumber)
+	addField("last_request_date", terminal.LastRequestDate)
+	addField("database_update_date", terminal.DatabaseUpdateDate)
+	addField("is_active", terminal.IsActive)
+	addField("free_record_balance", terminal.FreeRecordBalance)
+	addField("status_changed_by_admin", terminal.StatusChangedByAdmin)
 
 	// Всегда обновляем поле updated_at
 	query += fmt.Sprintf("updated_at = $%d ", argId)
 	args = append(args, time.Now())
 	argId++
 
-	// Добавляем новое поле StatusChangedByAdmin
-	query += fmt.Sprintf("status_changed_by_admin = $%d, ", argId)
-	args = append(args, terminal.StatusChangedByAdmin)
-	argId++
+	// Удаляем последнюю запятую, если она есть
+	query = strings.TrimSuffix(query, ", ")
 
-	// Удаляем последнюю запятую и добавляем условие WHERE
-	query = strings.TrimSuffix(query, ", ") + fmt.Sprintf(" WHERE id = $%d", argId)
+	// Добавляем условие WHERE
+	query += fmt.Sprintf("WHERE id = $%d", argId)
 	args = append(args, terminal.ID)
 
+	// Логируем запрос и аргументы
+	r.logger.Info("Updating terminal",
+		"query", query,
+		"args", fmt.Sprintf("%+v", args))
+
 	// Выполняем запрос
-	_, err := r.db.ExecContext(ctx, query, args...)
+	result, err := r.db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to update terminal: %w", err)
 	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows were updated")
+	}
+
+	r.logger.Info("Terminal updated successfully",
+		"id", terminal.ID,
+		"rows_affected", rowsAffected)
 
 	return nil
 }

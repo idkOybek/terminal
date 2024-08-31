@@ -155,8 +155,9 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 		return nil, errors.New("не удалось определить роль пользователя")
 	}
 
-	log.Printf("User role: isAdmin=%v", isAdmin)
+	s.logger.Info("User role", "isAdmin", isAdmin)
 
+	// Обновляем только предоставленные поля
 	if req.AssemblyNumber != nil {
 		terminal.AssemblyNumber = *req.AssemblyNumber
 	}
@@ -169,9 +170,6 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	if req.Address != nil {
 		terminal.Address = *req.Address
 	}
-	if req.CashRegisterNumber != nil {
-		terminal.CashRegisterNumber = *req.CashRegisterNumber
-	}
 	if req.ModuleNumber != nil {
 		terminal.ModuleNumber = *req.ModuleNumber
 	}
@@ -181,33 +179,20 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 			return nil, fmt.Errorf("неверный формат даты LastRequestDate: %v", err)
 		}
 		terminal.LastRequestDate = lastRequestDate
-	} else {
-		terminal.LastRequestDate = time.Now()
 	}
-
 	if req.DatabaseUpdateDate != nil {
 		databaseUpdateDate, err := time.Parse(time.RFC3339, *req.DatabaseUpdateDate)
 		if err != nil {
 			return nil, fmt.Errorf("неверный формат даты DatabaseUpdateDate: %v", err)
 		}
 		terminal.DatabaseUpdateDate = databaseUpdateDate
-	} else {
-		terminal.DatabaseUpdateDate = time.Now()
 	}
-
 	if req.IsActive != nil {
 		if terminal.StatusChangedByAdmin && !isAdmin {
 			return nil, errors.New("только администратор может изменить статус терминала")
 		}
 		terminal.IsActive = *req.IsActive
 		terminal.StatusChangedByAdmin = isAdmin
-
-		// Добавим логирование
-		log.Printf("Updating terminal status: isActive=%v, statusChangedByAdmin=%v", terminal.IsActive, terminal.StatusChangedByAdmin)
-	}
-
-	if req.UserID != nil {
-		terminal.UserID = *req.UserID
 	}
 	if req.FreeRecordBalance != nil {
 		terminal.FreeRecordBalance = *req.FreeRecordBalance

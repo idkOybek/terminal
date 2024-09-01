@@ -205,7 +205,7 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 	if req.CashRegisterNumber != nil && *req.CashRegisterNumber != terminal.CashRegisterNumber {
     		terminal.IsActive = false
 		terminal.StatusChangedByAdmin = true
-		terminal.CompanyName = "ИЗМЕНИЛ ЗАВ НОМЕР КАССЫ"
+		terminal.CashRegisterNumber = "FALSE"
 	}
 	
 	err = s.repo.Update(ctx, terminal)

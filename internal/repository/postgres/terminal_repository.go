@@ -141,6 +141,7 @@ func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Termin
 	addField("inn", terminal.INN)
 	addField("company_name", terminal.CompanyName)
 	addField("address", terminal.Address)
+	addField("cash_register_number", terminal.CashRegisterNumber)
 	addField("module_number", terminal.ModuleNumber)
 	addField("last_request_date", terminal.LastRequestDate)
 	addField("database_update_date", terminal.DatabaseUpdateDate)

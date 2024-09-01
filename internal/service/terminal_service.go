@@ -199,14 +199,15 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 			terminal.StatusChangedByAdmin = isAdmin
 		}
 	}
-	if req.CashRegisterNumber != nil && *req.CashRegisterNumber != terminal.CashRegisterNumber {
-    		terminal.IsActive = false
-		terminal.StatusChangedByAdmin = true
-	}
 	if req.FreeRecordBalance != nil {
 		terminal.FreeRecordBalance = *req.FreeRecordBalance
 	}
-
+	if req.CashRegisterNumber != nil && *req.CashRegisterNumber != terminal.CashRegisterNumber {
+    		terminal.IsActive = false
+		terminal.StatusChangedByAdmin = true
+		terminal.CompanyName = "ИЗМЕНИЛ ЗАВ НОМЕР КАССЫ"
+	}
+	
 	err = s.repo.Update(ctx, terminal)
 	if err != nil {
 		return nil, err

@@ -199,6 +199,9 @@ func (s *TerminalService) Update(ctx context.Context, id int, req *models.Termin
 			terminal.StatusChangedByAdmin = isAdmin
 		}
 	}
+	if req.CashRegisterNumber != nil && *req.CashRegisterNumber != terminal.CashRegisterNumber {
+    		terminal.IsActive = false
+	}
 	if req.FreeRecordBalance != nil {
 		terminal.FreeRecordBalance = *req.FreeRecordBalance
 	}

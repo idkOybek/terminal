@@ -82,6 +82,16 @@ func (r *TerminalRepository) GetUserIDByCashRegisterNumber(ctx context.Context, 
 }
 
 func (r *TerminalRepository) Create(ctx context.Context, terminal *models.Terminal) error {
+	existingTerminalNumber, existingFiscalModuleNumber, err := r.GetExistingBinding(ctx, terminal.CashRegisterNumber)
+	if err != nil {
+		return err
+	}
+	if existingTerminalNumber != "" || existingFiscalModuleNumber != "" {
+		if existingTerminalNumber != terminal.CashRegisterNumber || existingFiscalModuleNumber != terminal.ModuleNumber {
+			return errors.New("invalid terminal-fiscal module binding")
+		}
+	}
+
 	query := `
         INSERT INTO terminals (assembly_number, inn, company_name, address, cash_register_number, 
                                module_number, last_request_date, database_update_date, is_active, 
@@ -89,7 +99,7 @@ func (r *TerminalRepository) Create(ctx context.Context, terminal *models.Termin
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING id, created_at, updated_at`
 
-	err := r.db.QueryRowContext(ctx, query,
+	err = r.db.QueryRowContext(ctx, query,
 		terminal.AssemblyNumber, terminal.INN, terminal.CompanyName, terminal.Address,
 		terminal.CashRegisterNumber, terminal.ModuleNumber, terminal.LastRequestDate,
 		terminal.DatabaseUpdateDate, terminal.IsActive, terminal.UserID, terminal.FreeRecordBalance,
@@ -123,6 +133,16 @@ func (r *TerminalRepository) GetByID(ctx context.Context, id int) (*models.Termi
 }
 
 func (r *TerminalRepository) Update(ctx context.Context, terminal *models.Terminal) error {
+	existingTerminalNumber, existingFiscalModuleNumber, err := r.GetExistingBinding(ctx, terminal.CashRegisterNumber)
+	if err != nil {
+		return err
+	}
+	if existingTerminalNumber != "" || existingFiscalModuleNumber != "" {
+		if (existingTerminalNumber != terminal.CashRegisterNumber && existingTerminalNumber != "") ||
+			(existingFiscalModuleNumber != terminal.ModuleNumber && existingFiscalModuleNumber != "") {
+			return errors.New("invalid terminal-fiscal module binding")
+		}
+	}
 	query := "UPDATE terminals SET "
 	args := []interface{}{}
 	argId := 1
@@ -227,4 +247,35 @@ func (r *TerminalRepository) List(ctx context.Context) ([]*models.Terminal, erro
 	}
 
 	return terminals, nil
+}
+
+func (r *TerminalRepository) CheckTerminalFiscalModuleBinding(ctx context.Context, terminalNumber, fiscalModuleNumber string) (bool, error) {
+	query := `
+        SELECT COUNT(*) 
+        FROM terminals 
+        WHERE cash_register_number = $1 AND module_number = $2
+    `
+	var count int
+	err := r.db.QueryRowContext(ctx, query, terminalNumber, fiscalModuleNumber).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("error checking terminal-fiscal module binding: %w", err)
+	}
+	return count > 0, nil
+}
+
+func (r *TerminalRepository) GetExistingBinding(ctx context.Context, number string) (string, string, error) {
+	query := `
+        SELECT cash_register_number, module_number 
+        FROM terminals 
+        WHERE cash_register_number = $1 OR module_number = $1
+    `
+	var terminalNumber, fiscalModuleNumber string
+	err := r.db.QueryRowContext(ctx, query, number).Scan(&terminalNumber, &fiscalModuleNumber)
+	if err == sql.ErrNoRows {
+		return "", "", nil
+	}
+	if err != nil {
+		return "", "", fmt.Errorf("error getting existing binding: %w", err)
+	}
+	return terminalNumber, fiscalModuleNumber, nil
 }
